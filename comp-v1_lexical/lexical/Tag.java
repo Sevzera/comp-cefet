@@ -1,3 +1,4 @@
+package lexical;
 public class Tag {
 
     // TO-DO -> RESERVED WORDS]
