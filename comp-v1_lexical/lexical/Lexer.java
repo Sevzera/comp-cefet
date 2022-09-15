@@ -21,11 +21,46 @@ public class Lexer {
             throw e;
         }
 
-        // TO-DO -> RESERVE WORDS, OPERATORS, ETC...
-        // e.g.
-        // reserve(new Word("&&", Tag.AND));
-        // reserve(new Word("||", Tag.OR));
-        // reserve(new Word("==", Tag.EQ));
+        // RESERVE WORDS, OPERATORS, ETC...
+        reserve(new Word("start", Tag.START));
+        reserve(new Word("exit", Tag.EXIT));
+        reserve(new Word("int", Tag.INT));
+        reserve(new Word("float", Tag.FLOAT));
+        reserve(new Word("string", Tag.STRING));
+        reserve(new Word("if", Tag.IF));
+        reserve(new Word("then", Tag.THEN));
+        reserve(new Word("else", Tag.ELSE));
+        reserve(new Word("end", Tag.END));
+        reserve(new Word("do", Tag.DO));
+        reserve(new Word("while", Tag.WHILE));
+        reserve(new Word("scan", Tag.SCAN));
+        reserve(new Word("print", Tag.PRINT));
+
+        reserve(new Word("==", Tag.EQUALS));
+        reserve(new Word(">", Tag.GREATER));
+        reserve(new Word(">=", Tag.GREATER_THAN));
+        reserve(new Word("<", Tag.LESS));
+        reserve(new Word("<=", Tag.LESS_THAN));
+        reserve(new Word("!", Tag.NEGATION));
+        reserve(new Word("<>", Tag.DIFFERENT));
+        reserve(new Word("&&", Tag.AND));
+        reserve(new Word("||", Tag.OR));
+        reserve(new Word("+", Tag.PLUS));
+        reserve(new Word("-", Tag.MINUS));
+        reserve(new Word("*", Tag.TIMES));
+        reserve(new Word("/", Tag.DIVIDE));
+        reserve(new Word("=", Tag.ASSIGN));
+
+        reserve(new Word("(", Tag.OPEN_PARENTHESIS));
+        reserve(new Word(")", Tag.CLOSE_PARENTHESIS));
+        reserve(new Word("{", Tag.OPEN_BRACE));
+        reserve(new Word("}", Tag.CLOSE_BRACE));
+        reserve(new Word("[", Tag.OPEN_BRACKET));
+        reserve(new Word("]", Tag.CLOSE_BRACKET));
+        reserve(new Word(";", Tag.SEMICOLON));
+        reserve(new Word(",", Tag.COMMA));
+        reserve(new Word(".", Tag.DOT));
+        reserve(new Word("\"", Tag.QUOTE));
     }
     
     private void readch() throws IOException {
@@ -57,8 +92,6 @@ public class Lexer {
 
         // OPERADORES
         switch (peek) {
-            // TO-DO -> OPERATORS
-            // e.g.
             // case '&':
             //     if (readch('&'))
             //         return Word.and;
