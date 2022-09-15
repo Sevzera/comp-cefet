@@ -1,11 +1,10 @@
 package lexical;
-public class Num extends Token {
+public class IntegerLiteral extends Token {
  
     public final int value;
  
-    public Num(int value) {
-        super(0);
-        // super(Tag.NUM)
+    public IntegerLiteral(int value) {
+        super(Tag.INTEGER)
         this.value = value;
     }
  
