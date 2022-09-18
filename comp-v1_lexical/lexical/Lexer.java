@@ -40,9 +40,9 @@ public class Lexer {
 
         reserve(new Word("==", Tag.EQUALS));
         reserve(new Word(">", Tag.GREATER));
-        reserve(new Word(">=", Tag.GREATER_THAN));
+        reserve(new Word(">=", Tag.GREATER_EQUAL));
         reserve(new Word("<", Tag.LESS));
-        reserve(new Word("<=", Tag.LESS_THAN));
+        reserve(new Word("<=", Tag.LESS_EQUAL));
         reserve(new Word("!", Tag.NEGATION));
         reserve(new Word("<>", Tag.DIFFERENT));
         reserve(new Word("&&", Tag.AND));
