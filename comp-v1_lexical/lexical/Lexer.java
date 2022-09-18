@@ -1,13 +1,15 @@
 package lexical;
+
 import java.io.*;
 import java.util.*;
+import lexical.literal.*;
 
 public class Lexer {
-    
+
     public static int line = 1;
     private char peek = ' ';
     private FileReader file;
-    private Hashtable words = new Hashtable();
+    private Hashtable<String, Word> words = new Hashtable<String, Word>();
 
     private void reserve(Word w) {
         words.put(w.getLexeme(), w);
@@ -62,7 +64,7 @@ public class Lexer {
         reserve(new Word(".", Tag.DOT));
         reserve(new Word("\"", Tag.QUOTE));
     }
-    
+
     private void readch() throws IOException {
         peek = (char) file.read();
     }
@@ -74,15 +76,12 @@ public class Lexer {
         peek = ' ';
         return true;
     }
-    
+
     public Token scan() throws IOException {
 
         // DELIMITADORES
         for (;; readch()) {
-            //  TO-DO -> SKIP DELIMITERS
-            //  e.g.
-            // if (peek == ' ' || peek == '\t' || peek == '\r')...
-            if (peek == ' ')
+            if (peek == ' ' || peek == '\t' || peek == '\r')
                 continue;
             else if (peek == '\n')
                 line++;
@@ -92,11 +91,33 @@ public class Lexer {
 
         // OPERADORES
         switch (peek) {
-            // case '&':
-            //     if (readch('&'))
-            //         return Word.and;
-            //     else
-            //         return new Token('&');
+            case '=':
+                if (readch('='))
+                    return Word.equals;
+                else
+                    return new Token('=');
+            case '<':
+                if (readch('='))
+                    return Word.less_equal;
+                else if (readch('>'))
+                    return Word.different;
+                else
+                    return new Token('<');
+            case '>':
+                if (readch('='))
+                    return Word.greater_equal;
+                else
+                    return new Token('>');
+            case '&':
+                if (readch('&'))
+                    return Word.and;
+                else
+                    return new Token('&');
+            case '|':
+                if (readch('|'))
+                    return Word.or;
+                else
+                    return new Token('|');
         }
 
         // NUMEROS
@@ -106,9 +127,20 @@ public class Lexer {
                 value = 10 * value + Character.digit(peek, 10);
                 readch();
             } while (Character.isDigit(peek));
-            return new Num(value);
+            if (peek != '.')
+                return new IntegerLiteral(value);
+            else
+                readch();
+            float valuef = value;
+            float decUnit = 10;
+            do {
+                valuef = valuef + Character.digit(peek, 10) / decUnit;
+                decUnit = decUnit * 10;
+                readch();
+            } while (Character.isDigit(peek));
+            return new FloatLiteral(valuef);
         }
-        
+
         // PALAVRAS
         if (Character.isLetter(peek)) {
             StringBuffer b = new StringBuffer();

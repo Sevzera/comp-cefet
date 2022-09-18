@@ -1,14 +1,15 @@
 package symbols;
+
 import lexical.*;
 import java.util.*;
 
 public class Env {
 
-    private Hashtable table;
+    private Hashtable<Token, Id> table;
     protected Env prev;
 
     public Env(Env prev) {
-        table = new Hashtable();
+        table = new Hashtable<Token, Id>();
         this.prev = prev;
     }
 
@@ -16,7 +17,7 @@ public class Env {
         table.put(w, i);
 
     }
-    
+
     public Id get(Token w) {
         for (Env e = this; e != null; e = e.prev) {
             Id found = (Id) (e.table.get(w));

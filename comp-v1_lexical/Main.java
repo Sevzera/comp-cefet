@@ -1,3 +1,6 @@
+import java.io.IOException;
+import lexical.Token;
+
 public class Main {
 
     public static void main(String[] args) {
@@ -11,5 +14,5 @@ public class Main {
         } catch (IOException ex) {
         }
     }
-    
+
 }
