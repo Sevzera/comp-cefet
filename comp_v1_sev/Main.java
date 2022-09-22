@@ -1,30 +1,35 @@
 import java.io.IOException;
+import java.util.Set;
+
 import lexico.*;
+import lexico.Lexer;
 import lexico.tokens.*;
 
 public class Main {
     public static void main(String[] args) {
         try {
-            Lexer lex = new Lexer("tests/test1.txt");
-            int i = 0;
-            while (i < 80) {
+            Lexer lex = new Lexer("tests/test5.txt");
+            while (true) {
                 Token scanned = lex.scan();
-                System.out.println(scanned.tag);
-                if (scanned.tag == Tag._STRING_LIT) {
-                    _String token = (_String) scanned;
-                    System.out.println(token);
-                } else if (scanned.tag == Tag._INT_LIT) {
-                    _Integer token = (_Integer) scanned;
-                    System.out.println(token);
-                } else if (scanned.tag == Tag._FLOAT_LIT) {
-                    _Float token = (_Float) scanned;
-                    System.out.println(token);
+                if (scanned.tag == Tag.LIT_STRING) {
+                    LiteralString token = (LiteralString) scanned;
+                    System.out.println(token.toString());
+                } else if (scanned.tag == Tag.LIT_INT) {
+                    LiteralInteger token = (LiteralInteger) scanned;
+                    System.out.println(token.toString());
+                } else if (scanned.tag == Tag.LIT_FLOAT) {
+                    LiteralFloat token = (LiteralFloat) scanned;
+                    System.out.println(token.toString());
                 } else if (scanned.tag == Tag.EOF) {
                     break;
                 } else {
-                    System.out.println(scanned);
+                    System.out.println(scanned.toString());
                 }
-                i++;
+                System.out.println("----------------");
+            }
+            Set<Token> faultyToken = Lexer.errors.keySet();
+            for (Token t : faultyToken) {
+                System.out.println("ERROR: Pattern " + (char) t.tag + " not recognized in line " + Lexer.errors.get(t));
             }
         } catch (IOException e) {
             e.printStackTrace();
