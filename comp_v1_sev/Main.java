@@ -1,7 +1,6 @@
 import java.io.IOException;
 import java.util.Set;
 
-import lexico.*;
 import lexico.Lexer;
 import lexico.tokens.*;
 
