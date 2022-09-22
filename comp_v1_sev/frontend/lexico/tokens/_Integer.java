@@ -1,7 +1,8 @@
-public class Integer extends Token {
+package tokens;
+public class _Integer extends Token {
     public final int value;
 
-    public Integer(int value) {
+    public _Integer(int value) {
         super(Tag._INT);
         this.value = value;
     }

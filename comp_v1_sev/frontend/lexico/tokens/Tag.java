@@ -1,3 +1,5 @@
+package tokens;
+
 public class Tag {
     public final static int
     // Palavras reservadas
@@ -41,5 +43,7 @@ public class Tag {
             _FLOAT = 279,
             _STRING = 280,
             // Identificador
-            ID = 281;
+            ID = 281,
+            // EOF
+            EOF = 282;
 }

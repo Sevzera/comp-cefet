@@ -1,3 +1,4 @@
+package tokens;
 public class Word extends Token {
     private String lexeme = "";
     public static final Word start = new Word("start", Tag.START);

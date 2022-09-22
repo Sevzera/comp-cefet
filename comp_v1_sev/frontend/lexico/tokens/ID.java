@@ -1,8 +1,9 @@
-public class _String extends Token {
+package tokens;
+public class ID extends Token {
     public final String value;
 
-    public _String(String value) {
-        super(Tag._STRING);
+    public ID(String value) {
+        super(Tag.ID);
         this.value = value;
     }
 

@@ -1,7 +1,8 @@
-public class Float extends Token {
+package tokens;
+public class _Float extends Token {
     public final float value;
 
-    public Float(float value) {
+    public _Float(float value) {
         super(Tag._FLOAT);
         this.value = value;
     }

@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.*;
+import tokens.*;
 
 public class Lexer {
     public static int line = 1; // contador de linhas
@@ -130,7 +131,7 @@ public class Lexer {
                 readch();
             } while (Character.isDigit(ch));
             if (ch != '.')
-                return new Integer(value);
+                return new _Integer(value);
             else
                 readch();
             float valuef = value;
@@ -140,7 +141,7 @@ public class Lexer {
                 decUnit = decUnit * 10;
                 readch();
             } while (Character.isDigit(ch));
-            return new Float(valuef);
+            return new _Float(valuef);
         }
         // Strings
         if (ch == '\"') {
@@ -168,6 +169,9 @@ public class Lexer {
             words.put(s, w);
             return w;
         }
+        // Fim de arquivo
+        if (ch == -1)
+            return new Token(Tag.EOF);
         // Caracteres não especificados
         Token t = new Token(ch);
         ch = ' ';
