@@ -77,6 +77,7 @@ public class Lexer {
     }
 
     public Token scan() throws IOException {
+        System.out.println("SCANNING...");
         // Desconsidera delimitadores na entrada
         for (;; readch()) {
             if (ch == ' ' || ch == '\t' || ch == '\r' || ch == '\b')
