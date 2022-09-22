@@ -8,7 +8,7 @@ import lexico.tokens.*;
 public class Main {
     public static void main(String[] args) {
         try {
-            Lexer lex = new Lexer("tests/test5.txt");
+            Lexer lex = new Lexer("testes/test5.txt");
             while (true) {
                 Token scanned = lex.scan();
                 if (scanned.tag == Tag.LIT_STRING) {
@@ -27,9 +27,21 @@ public class Main {
                 }
                 System.out.println("----------------");
             }
+            System.out.println("SYMBOL TABLE");
+            System.out.println("----------------");
+            Set<String> lexeme = Lexer.words.keySet();
+            for (String l : lexeme) {
+                System.out.println("Token: " + Lexer.words.get(l).toString());
+                System.out.println("Lexeme: " + l);
+                System.out.println("----------------");
+            }
+
+            System.out.println("ERROR REPORT");
+            System.out.println("----------------");
             Set<Token> faultyToken = Lexer.errors.keySet();
             for (Token t : faultyToken) {
-                System.out.println("ERROR: Pattern " + (char) t.tag + " not recognized in line " + Lexer.errors.get(t));
+                System.out.println(
+                        "ERROR: Pattern " + (char) t.tag + " not recognized in line " + Lexer.errors.get(t));
             }
         } catch (IOException e) {
             e.printStackTrace();

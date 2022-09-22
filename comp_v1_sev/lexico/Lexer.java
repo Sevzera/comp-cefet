@@ -8,7 +8,7 @@ public class Lexer {
     public static int line = 1; // contador de linhas
     private char ch = ' '; // caractere lido do arquivo
     private FileReader file;
-    private Hashtable<String, Word> words = new Hashtable<String, Word>();
+    public static Hashtable<String, Word> words = new Hashtable<String, Word>();
     public static Hashtable<Token, Integer> errors = new Hashtable<Token, Integer>();
 
     /* Método para inserir palavras reservadas na HashTable */
