@@ -1,4 +1,5 @@
-package tokens;
+package lexico.tokens;
+
 public class Token {
     public final int tag; // constante que representa o token
 
@@ -7,6 +8,6 @@ public class Token {
     }
 
     public String toString() {
-        return "" + tag;
+        return "<" + tag + ">";
     }
 }

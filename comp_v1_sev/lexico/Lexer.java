@@ -1,12 +1,15 @@
+package lexico;
+
 import java.io.*;
 import java.util.*;
-import tokens.*;
+import lexico.tokens.*;
 
 public class Lexer {
     public static int line = 1; // contador de linhas
     private char ch = ' '; // caractere lido do arquivo
     private FileReader file;
-    private Hashtable<String, Word> words = new Hashtable<String, Word>();
+    public static Hashtable<String, Word> words = new Hashtable<String, Word>();
+    public static Hashtable<Token, Integer> errors = new Hashtable<Token, Integer>();
 
     /* Método para inserir palavras reservadas na HashTable */
     private void reserve(Word w) {
@@ -19,7 +22,7 @@ public class Lexer {
         try {
             file = new FileReader(fileName);
         } catch (FileNotFoundException e) {
-            System.out.println("Arquivo não encontrado");
+            System.out.println("File not found at: " + fileName);
             throw e;
         }
         // Insere palavras reservadas na HashTable
@@ -34,7 +37,7 @@ public class Lexer {
         reserve(Word.scan);
         reserve(Word.print);
         reserve(Word.semi);
-        reserve(Word.colon);
+        reserve(Word.comma);
         reserve(Word.dot);
         reserve(Word.opar);
         reserve(Word.cpar);
@@ -54,9 +57,9 @@ public class Lexer {
         reserve(Word.le);
         reserve(Word.df);
         reserve(Word.eq);
-        reserve(Word._int);
-        reserve(Word._float);
-        reserve(Word._string);
+        reserve(Word.type_int);
+        reserve(Word.type_float);
+        reserve(Word.type_string);
     }
 
     /* Lê o próximo caractere do arquivo */
@@ -83,6 +86,62 @@ public class Lexer {
             else
                 break;
         }
+        // Comentários
+        if (ch == '/') {
+            readch();
+            if (ch == '/') {
+                do {
+                    readch();
+                    if (ch == '\n') {
+                        readch();
+                        line++;
+                        break;
+                    }
+                } while ((int) ch != 65535);
+            } else if (ch == '*') {
+                do {
+                    readch();
+                    if (ch == '\n') {
+                        line++;
+                    }
+                    if (ch == '*') {
+                        readch();
+                        if (ch == '/') {
+                            readch();
+                            break;
+                        }
+                    }
+                } while ((int) ch != 65535);
+
+            } else {
+                return new Token('/');
+            }
+        }
+        // Pontuação
+        switch (ch) {
+            case ';':
+                readch();
+                return Word.semi;
+            case ',':
+                readch();
+                return Word.comma;
+            case '.':
+                readch();
+                return Word.dot;
+            case '(':
+                readch();
+                return Word.opar;
+            case ')':
+                readch();
+                return Word.cpar;
+            case '{':
+                readch();
+                return Word.obra;
+            case '}':
+                readch();
+                return Word.cbra;
+        }
+
         switch (ch) {
             // Operadores
             case '&':
@@ -96,14 +155,19 @@ public class Lexer {
                 else
                     return new Token('|');
             case '!':
+                readch();
                 return Word.not;
             case '+':
+                readch();
                 return Word.add;
             case '-':
+                readch();
                 return Word.sub;
             case '*':
+                readch();
                 return Word.mul;
             case '/':
+                readch();
                 return Word.div;
             case '=':
                 if (readch('='))
@@ -116,9 +180,10 @@ public class Lexer {
                 else
                     return Word.gt;
             case '<':
-                if (readch('='))
+                readch();
+                if (ch == '=')
                     return Word.le;
-                else if (readch('>'))
+                else if (ch == '>')
                     return Word.df;
                 else
                     return Word.lt;
@@ -131,7 +196,7 @@ public class Lexer {
                 readch();
             } while (Character.isDigit(ch));
             if (ch != '.')
-                return new _Integer(value);
+                return new LiteralInteger(value);
             else
                 readch();
             float valuef = value;
@@ -141,18 +206,18 @@ public class Lexer {
                 decUnit = decUnit * 10;
                 readch();
             } while (Character.isDigit(ch));
-            return new _Float(valuef);
+            return new LiteralFloat(valuef);
         }
         // Strings
-        if (ch == '\"') {
+        if (ch == '"') {
             StringBuffer sb = new StringBuffer();
             do {
                 sb.append(ch);
                 readch();
-            } while (ch != '\"');
+            } while (ch != '"' && (int) ch != 65535);
             sb.append(ch);
             readch();
-            return new _String(sb.toString());
+            return new LiteralString(sb.toString());
         }
         // Identificadores (e palavras reservadas)
         if (Character.isLetter(ch) || ch == '_') {
@@ -169,11 +234,10 @@ public class Lexer {
             words.put(s, w);
             return w;
         }
-        // Fim de arquivo
-        if (ch == -1)
-            return new Token(Tag.EOF);
         // Caracteres não especificados
         Token t = new Token(ch);
+        if (t.tag != 65535)
+            errors.put(t, line);
         ch = ' ';
         return t;
     }
