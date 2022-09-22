@@ -4,11 +4,11 @@ public class _Integer extends Token {
     public final int value;
 
     public _Integer(int value) {
-        super(Tag._INT);
+        super(Tag._INT_LIT);
         this.value = value;
     }
 
     public String toString() {
-        return "" + value;
+        return "<" + value + ", " + (char) tag + ">";
     }
 }

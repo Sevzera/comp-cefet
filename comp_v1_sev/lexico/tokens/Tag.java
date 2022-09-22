@@ -42,8 +42,12 @@ public class Tag {
             _INT = 278,
             _FLOAT = 279,
             _STRING = 280,
+            // Literais
+            _INT_LIT = 281,
+            _FLOAT_LIT = 282,
+            _STRING_LIT = 283,
             // Identificador
-            ID = 281,
+            ID = 284,
             // EOF
-            EOF = 282;
+            EOF = 285;
 }

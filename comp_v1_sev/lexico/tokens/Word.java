@@ -1,4 +1,5 @@
 package lexico.tokens;
+
 public class Word extends Token {
     private String lexeme = "";
     public static final Word start = new Word("start", Tag.START);
@@ -46,6 +47,6 @@ public class Word extends Token {
     }
 
     public String toString() {
-        return "" + lexeme;
+        return "<" + lexeme + ", " + (char) tag + ">";
     }
 }

@@ -64,7 +64,6 @@ public class Lexer {
     /* Lê o próximo caractere do arquivo */
     private void readch() throws IOException {
         ch = (char) file.read();
-        System.out.println("ch = " + ch);
     }
 
     /* Lê o próximo caractere do arquivo e verifica se é igual a c */
@@ -99,15 +98,21 @@ public class Lexer {
                     return Word.or;
                 else
                     return new Token('|');
+
             case '!':
+                readch();
                 return Word.not;
             case '+':
+                readch();
                 return Word.add;
             case '-':
+                readch();
                 return Word.sub;
             case '*':
+                readch();
                 return Word.mul;
             case '/':
+                readch();
                 return Word.div;
             case '=':
                 if (readch('='))
@@ -149,12 +154,12 @@ public class Lexer {
             return new _Float(valuef);
         }
         // Strings
-        if (ch == '\"') {
+        if (ch == '"') {
             StringBuffer sb = new StringBuffer();
             do {
                 sb.append(ch);
                 readch();
-            } while (ch != '\"');
+            } while (ch != '"');
             sb.append(ch);
             readch();
             return new _String(sb.toString());
