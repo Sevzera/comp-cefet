@@ -64,6 +64,7 @@ public class Lexer {
     /* Lê o próximo caractere do arquivo */
     private void readch() throws IOException {
         ch = (char) file.read();
+        System.out.println("ch = " + ch);
     }
 
     /* Lê o próximo caractere do arquivo e verifica se é igual a c */
@@ -118,9 +119,10 @@ public class Lexer {
                 else
                     return Word.gt;
             case '<':
-                if (readch('='))
+                readch();
+                if (ch == '=')
                     return Word.le;
-                else if (readch('>'))
+                else if (ch == '>')
                     return Word.df;
                 else
                     return Word.lt;
