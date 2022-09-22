@@ -1,4 +1,5 @@
-package tokens;
+package lexico.tokens;
+
 public class _Float extends Token {
     public final float value;
 

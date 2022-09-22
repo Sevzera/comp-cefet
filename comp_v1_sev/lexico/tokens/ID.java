@@ -1,4 +1,5 @@
-package tokens;
+package lexico.tokens;
+
 public class ID extends Token {
     public final String value;
 

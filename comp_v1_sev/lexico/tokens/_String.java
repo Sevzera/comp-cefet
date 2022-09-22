@@ -1,4 +1,6 @@
-package tokens;
+
+package lexico.tokens;
+
 public class _String extends Token {
     public final String value;
 

@@ -1,4 +1,5 @@
-package tokens;
+package lexico.tokens;
+
 public class _Integer extends Token {
     public final int value;
 

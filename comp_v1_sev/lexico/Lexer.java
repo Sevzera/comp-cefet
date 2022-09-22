@@ -1,6 +1,8 @@
+package lexico;
+
 import java.io.*;
 import java.util.*;
-import tokens.*;
+import lexico.tokens.*;
 
 public class Lexer {
     public static int line = 1; // contador de linhas
@@ -19,7 +21,7 @@ public class Lexer {
         try {
             file = new FileReader(fileName);
         } catch (FileNotFoundException e) {
-            System.out.println("Arquivo não encontrado");
+            System.out.println("File not found at: " + fileName);
             throw e;
         }
         // Insere palavras reservadas na HashTable

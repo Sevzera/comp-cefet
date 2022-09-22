@@ -1,4 +1,4 @@
-package tokens;
+package lexico.tokens;
 
 public class Tag {
     public final static int
