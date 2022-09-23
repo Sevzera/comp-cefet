@@ -30,9 +30,11 @@ public class Main {
             System.out.println("----------------");
             Set<String> lexeme = Lexer.words.keySet();
             for (String l : lexeme) {
-                System.out.println("Token: " + Lexer.words.get(l).toString());
-                System.out.println("Lexeme: " + l);
-                System.out.println("----------------");
+                if (Lexer.words.get(l).tag == Tag.ID) {
+                    System.out.println("Token: " + Lexer.words.get(l).toString());
+                    System.out.println("Lexeme: " + l);
+                    System.out.println("----------------");
+                }
             }
 
             System.out.println("ERROR REPORT");
