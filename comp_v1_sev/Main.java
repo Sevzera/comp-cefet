@@ -7,7 +7,7 @@ import lexico.tokens.*;
 public class Main {
     public static void main(String[] args) {
         try {
-            Lexer lex = new Lexer("testes/test5.txt");
+            Lexer lex = new Lexer("testes/test1.txt");
             while (true) {
                 Token scanned = lex.scan();
                 if (scanned.tag == Tag.LIT_STRING) {

@@ -114,7 +114,7 @@ public class Lexer {
                 } while ((int) ch != 65535);
 
             } else {
-                return new Token('/');
+                return Word.div;
             }
         }
         // Pontuação
