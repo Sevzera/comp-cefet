@@ -64,12 +64,7 @@ public class Main {
             for (Token t : faultyToken) {
                 System.out.print(
                         "ERROR: Pattern " + (char) t.tag + " not recognized in line " + Lexer.errors.get(t));
-                if (i == 6) {
-                    i = 0;
-                    System.out.println();
-                } else {
-                    i++;
-                }
+                System.out.println();
             }
         } catch (IOException e) {
             e.printStackTrace();
