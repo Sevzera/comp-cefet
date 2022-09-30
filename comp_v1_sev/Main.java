@@ -10,7 +10,7 @@ public class Main {
             Lexer lex = new Lexer("testes/" + args[0] + ".txt");
             float i = 0;
             System.out.println(
-                    "-------------------------------------------------------------------------------------------------------------------");
+                    "-------------------------------------------------------------------------");
             System.out.println("TOKENS");
             System.out.println("------");
             while (true) {
@@ -40,13 +40,13 @@ public class Main {
             i = 0;
             System.out.println();
             System.out.println(
-                    "-------------------------------------------------------------------------------------------------------------------");
+                    "-------------------------------------------------------------------------");
             System.out.println("SYMBOL TABLE");
             System.out.println("------------");
             Set<String> lexeme = Lexer.words.keySet();
             for (String l : lexeme) {
                 System.out.print("[Token: " + Lexer.words.get(l).toString() + ", Lexeme: " + l + "]   ");
-                if (i == 3) {
+                if (i == 1) {
                     i = 0;
                     System.out.println();
                 } else {
@@ -56,7 +56,7 @@ public class Main {
             i = 0;
             System.out.println();
             System.out.println(
-                    "-------------------------------------------------------------------------------------------------------------------");
+                    "-------------------------------------------------------------------------");
 
             Set<Token> faultyToken = Lexer.errors.keySet();
             if (faultyToken.size() > 0) {
