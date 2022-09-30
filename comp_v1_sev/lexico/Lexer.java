@@ -141,7 +141,7 @@ public class Lexer {
                 return Word.cbra;
         }
 
-        // identifica operadores
+        // identifica operadores (e dois casos de erro)
         switch (ch) {
             case '&':
                 if (readch('&'))
