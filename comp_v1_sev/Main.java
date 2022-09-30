@@ -58,14 +58,17 @@ public class Main {
             System.out.println(
                     "-------------------------------------------------------------------------------------------------------------------");
 
-            System.out.println("ERROR REPORT");
-            System.out.println("------------");
             Set<Token> faultyToken = Lexer.errors.keySet();
-            for (Token t : faultyToken) {
-                System.out.print(
-                        "ERROR: Pattern " + (char) t.tag + " not recognized in line " + Lexer.errors.get(t));
-                System.out.println();
-            }
+            if (faultyToken.size() > 0) {
+                System.out.println("ERROR REPORT");
+                System.out.println("------------");
+                for (Token t : faultyToken) {
+                    System.out.print(
+                            "ERROR: Pattern " + (char) t.tag + " not recognized in line " + Lexer.errors.get(t));
+                    System.out.println();
+                }
+            } else
+                System.out.println("Compilation successful!");
         } catch (IOException e) {
             e.printStackTrace();
         }
