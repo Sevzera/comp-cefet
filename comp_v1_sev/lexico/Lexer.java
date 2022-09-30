@@ -16,7 +16,8 @@ public class Lexer {
         words.put(w.getLexeme(), w);
     }
 
-    // constroi o lexer e insere as palavras reservadas diretamente na tabela de simbolos
+    // constroi o lexer e insere as palavras reservadas diretamente na tabela de
+    // simbolos
     public Lexer(String fileName) throws FileNotFoundException {
         try {
             file = new FileReader(fileName);
@@ -145,13 +146,19 @@ public class Lexer {
             case '&':
                 if (readch('&'))
                     return Word.and; // &&
-                else
-                    return new Token('&');
+                else {
+                    Token t = new Token('&');
+                    errors.put(t, line);
+                    return t;
+                }
             case '|':
                 if (readch('|'))
                     return Word.or;
-                else
-                    return new Token('|');
+                else {
+                    Token t = new Token('|');
+                    errors.put(t, line);
+                    return t;
+                }
             case '!':
                 readch();
                 return Word.not;
