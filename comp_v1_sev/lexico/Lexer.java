@@ -86,7 +86,12 @@ public class Lexer {
                 break;
         }
         // identifica comentarios
-        if (ch == '/') {
+        int commentary_counter = 0;
+        while (ch == '/') {
+            commentary_counter++;
+            if(commentary_counter > 1) {
+                line++;
+            }
             readch();
             if (ch == '/') {
                 do {
@@ -111,7 +116,6 @@ public class Lexer {
                         }
                     }
                 } while ((int) ch != 65535);
-
             } else {
                 return Word.div;
             }
