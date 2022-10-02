@@ -86,12 +86,8 @@ public class Lexer {
                 break;
         }
         // identifica comentarios
-        int commentary_counter = 0;
+        int line_aux = 0;
         while (ch == '/') {
-            commentary_counter++;
-            if(commentary_counter > 1) {
-                line++;
-            }
             readch();
             if (ch == '/') {
                 do {
@@ -103,6 +99,7 @@ public class Lexer {
                     }
                 } while ((int) ch != 65535);
             } else if (ch == '*') {
+                line_aux = line;
                 do {
                     readch();
                     if (ch == '\n') {
@@ -118,6 +115,14 @@ public class Lexer {
                 } while ((int) ch != 65535);
             } else {
                 return Word.div;
+            }
+            if(ch == 65535) {
+                Token t = new Token('*');
+                    errors.put(t, line_aux);
+                    return t;
+            }
+            if (ch == ' ' || ch == '\t' || ch == '\r' || ch == '\b') {
+                ch = '/';
             }
         }
         // identifica pontuacao

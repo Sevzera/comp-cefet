@@ -1,9 +1,9 @@
-//Comentario de uma linha
-/* Comentario de 2 linhas fechado
-eu estou fechado
+// Comentario simples fechado
+/*
+Comentario de linha multipla fechado
 */
-/* Comentario de 2 linhas aberto
-eu estou aberto
+/*
+Comentario de linha multipla aberto
 
 start
 
