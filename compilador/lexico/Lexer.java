@@ -223,12 +223,12 @@ public class Lexer {
             return new LiteralFloat(valuef); // numero de ponto flutuante literal
         }
         // identifica strings literais
-        if (ch == '"') {
+        if (ch == '{') {
             StringBuffer sb = new StringBuffer();
             do {
                 sb.append(ch);
                 readch();
-            } while (ch != '"' && (int) ch != 65535);
+            } while (ch != '}' && (int) ch != 65535);
             sb.append(ch);
             readch();
             return new LiteralString(sb.toString()); // string literal
