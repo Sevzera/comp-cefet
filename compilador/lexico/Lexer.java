@@ -7,6 +7,7 @@ import lexico.tokens.*;
 public class Lexer {
     public static int line = 1; // contador de linhas
     private char ch = ' '; // caractere lido do arquivo
+    private char oldChar = ' '; // salva o ch anterior
     private FileReader file;
     public static Hashtable<String, Word> words = new Hashtable<String, Word>(); // tabela de simbolos
     public static Hashtable<Token, Integer> errors = new Hashtable<Token, Integer>(); // tabela de erros
@@ -63,6 +64,7 @@ public class Lexer {
 
     // le o proximo caractere
     private void readch() throws IOException {
+        oldChar = ch;
         ch = (char) file.read();
     }
 
@@ -223,14 +225,12 @@ public class Lexer {
             return new LiteralFloat(valuef); // numero de ponto flutuante literal
         }
         // identifica strings literais
-        if (ch == '{') {
+        if (oldChar == '{') {
             StringBuffer sb = new StringBuffer();
             do {
                 sb.append(ch);
                 readch();
             } while (ch != '}' && (int) ch != 65535);
-            sb.append(ch);
-            readch();
             return new LiteralString(sb.toString()); // string literal
         }
         // identifica identificadores e palavras reservadas

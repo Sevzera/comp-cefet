@@ -29,19 +29,20 @@ public class Parser {
     private void eat(int tag) {
         if (token.tag == tag)
             advance();
-        else
-            error("Syntax error");
+        else 
+            error("Syntax error --> Missing token: " + tag);
     }
 
     private void error(String msg) {
-        throw new Error("Error at line " + Lexer.line + ": " + msg);
+        throw new Error("Error at line " + Lexer.line + ": " + msg + "\nError token: " + token.toString());
     }
 
     private void program() {
+        System.out.println("program");
         switch (token.tag) {
             case Tag.RW_START:
                 eat(Tag.RW_START);
-                if (token.tag == Tag.LIT_INT || token.tag == Tag.LIT_FLOAT || token.tag == Tag.LIT_STRING) {
+                if (token.tag == Tag.TYPE_INT || token.tag == Tag.TYPE_FLOAT || token.tag == Tag.TYPE_STRING) {
                     decl_list();
                 }
                 stmt_list();
@@ -53,12 +54,13 @@ public class Parser {
     }
 
     private void decl_list() {
+        System.out.println("decl_list");
         switch (token.tag) {
-            case Tag.LIT_INT:
-            case Tag.LIT_FLOAT:
-            case Tag.LIT_STRING:
+            case Tag.TYPE_INT:
+            case Tag.TYPE_FLOAT:
+            case Tag.TYPE_STRING:
                 decl();
-                while (token.tag == Tag.LIT_INT || token.tag == Tag.LIT_FLOAT || token.tag == Tag.LIT_STRING) {
+                while (token.tag == Tag.TYPE_INT || token.tag == Tag.TYPE_FLOAT || token.tag == Tag.TYPE_STRING) {
                     decl();
                 }
                 break;
@@ -68,10 +70,11 @@ public class Parser {
     }
 
     private void decl() {
+        System.out.println("decl");
         switch (token.tag) {
-            case Tag.LIT_INT:
-            case Tag.LIT_FLOAT:
-            case Tag.LIT_STRING:
+            case Tag.TYPE_INT:
+            case Tag.TYPE_FLOAT:
+            case Tag.TYPE_STRING:
                 type();
                 ident_list();
                 eat(Tag.PT_SEMI);
@@ -82,6 +85,7 @@ public class Parser {
     }
 
     private void ident_list() {
+        System.out.println("ident_list");
         switch (token.tag) {
             case Tag.ID:
                 identifier();
@@ -96,15 +100,16 @@ public class Parser {
     }
 
     private void type () {
+        System.out.println("type");
         switch (token.tag) {
-            case Tag.LIT_INT:
-                eat(Tag.LIT_INT);
+            case Tag.TYPE_INT:
+                eat(Tag.TYPE_INT);
                 break;
-            case Tag.LIT_FLOAT:
-                eat(Tag.LIT_FLOAT);
+            case Tag.TYPE_FLOAT:
+                eat(Tag.TYPE_FLOAT);
                 break;
-            case Tag.LIT_STRING:
-                eat(Tag.LIT_STRING);
+            case Tag.TYPE_STRING:
+                eat(Tag.TYPE_STRING);
                 break;
             default:
                 error("Syntax error _type_ --> Missing type declaration (int, float or string)"); 
@@ -112,6 +117,7 @@ public class Parser {
     }
 
     private void stmt_list() {
+        System.out.println("stmt_list");
         switch (token.tag) {
             case Tag.ID:
             case Tag.RW_IF:
@@ -119,8 +125,9 @@ public class Parser {
             case Tag.RW_SCAN:
             case Tag.RW_PRINT:
                 stmt();
-                while (token.tag == Tag.RW_IF || token.tag == Tag.RW_DO || token.tag == Tag.RW_SCAN || token.tag == Tag.RW_PRINT) {
+                while (token.tag == Tag.ID || token.tag == Tag.RW_IF || token.tag == Tag.RW_DO || token.tag == Tag.RW_SCAN || token.tag == Tag.RW_PRINT) {
                     stmt();
+                    System.out.println("\n");
                 }
                 break;
             default:
@@ -129,6 +136,7 @@ public class Parser {
     }
 
     private void stmt() {
+        System.out.println("stmt");
         switch (token.tag) {
             case Tag.ID:
                 assign_stmt();
@@ -154,6 +162,7 @@ public class Parser {
     }
 
     private void assign_stmt() {
+        System.out.println("assign_stmt");
         switch (token.tag) {
             case Tag.ID:
                 identifier();
@@ -166,6 +175,7 @@ public class Parser {
     }
 
     private void if_stmt() {
+        System.out.println("if_stmt");
         switch (token.tag) {
             case Tag.RW_IF:
                 eat(Tag.RW_IF);
@@ -181,6 +191,7 @@ public class Parser {
     }
 
     private void if_stmt_tail() {
+        System.out.println("if_stmt_tail");
         switch (token.tag) {
             case Tag.RW_ELSE:
                 eat(Tag.RW_ELSE);
@@ -194,6 +205,7 @@ public class Parser {
     }
 
     private void condition() {
+        System.out.println("condition");
         switch (token.tag) {
             case Tag.ID:
             case Tag.LIT_INT:
@@ -210,6 +222,7 @@ public class Parser {
     }
 
     private void while_stmt() { 
+        System.out.println("while_stmt");
         switch (token.tag) {
             case Tag.RW_DO:
                 eat(Tag.RW_DO);
@@ -222,6 +235,7 @@ public class Parser {
     }   
 
     private void stmt_sufix() {
+        System.out.println("stmt_sufix");
         switch (token.tag) {
             case Tag.RW_WHILE:
                 eat(Tag.RW_WHILE);
@@ -234,6 +248,7 @@ public class Parser {
     }
 
     private void read_stmt() {
+        System.out.println("read_stmt");
         switch (token.tag) {
             case Tag.RW_SCAN:
                 eat(Tag.RW_SCAN);
@@ -247,6 +262,7 @@ public class Parser {
     }
 
     private void write_stmt() {
+        System.out.println("write_stmt");
         switch (token.tag) {
             case Tag.RW_PRINT:
                 eat(Tag.RW_PRINT);
@@ -260,6 +276,7 @@ public class Parser {
     }
 
     private void writable() {
+        System.out.println("writable");
         switch (token.tag) {
             case Tag.ID:
             case Tag.LIT_INT:
@@ -279,6 +296,7 @@ public class Parser {
     }
 
     private void expression() {
+        System.out.println("expression");
         switch (token.tag) {
             case Tag.ID:
             case Tag.LIT_INT:
@@ -296,6 +314,7 @@ public class Parser {
     }
 
     private void expression_tail() {
+        System.out.println("expression_tail");
         switch (token.tag) {
             case Tag.CP_DF:
             case Tag.CP_EQ:
@@ -316,6 +335,7 @@ public class Parser {
     }
 
     private void simple_expression() {
+        System.out.println("simple_expression");
         switch (token.tag) {
             case Tag.ID:
             case Tag.LIT_INT:
@@ -333,13 +353,18 @@ public class Parser {
     }
 
     private void simple_expression_tail() {
+        System.out.println("simple_expression_tail");
         switch (token.tag) {
             case Tag.AR_ADD:
             case Tag.AR_SUB:
             case Tag.RL_OR:
                 addop();
                 term();
-                simple_expression_tail();
+                if (Tag.AR_ADD == token.tag || Tag.AR_SUB == token.tag || Tag.RL_OR == token.tag || Tag.CP_DF == token.tag || 
+                Tag.CP_EQ == token.tag || Tag.CP_GE == token.tag || Tag.CP_GT == token.tag || Tag.CP_LE == token.tag || 
+                Tag.CP_LT == token.tag ||  Tag.PT_CPAR == token.tag  || Tag.PT_SEMI == token.tag) {
+                    simple_expression_tail();
+                }
                 break;
             case Tag.CP_DF:
             case Tag.CP_EQ:
@@ -348,6 +373,7 @@ public class Parser {
             case Tag.CP_LE:
             case Tag.CP_LT:
             case Tag.PT_CPAR:
+            case Tag.PT_SEMI:
                 break;
             default:
                 error("Syntax error _simple-expression-tail_ --> Missing additive operator or missing relational operator '||' or missing parenthesis");
@@ -355,6 +381,7 @@ public class Parser {
     }
 
     private void term() {
+        System.out.println("term");
         switch (token.tag) {
             case Tag.ID:
             case Tag.LIT_INT:
@@ -372,17 +399,23 @@ public class Parser {
     }
 
     private void term_tail() {
+        System.out.println("term_tail");
         switch (token.tag) {
             case Tag.AR_MUL:
             case Tag.AR_DIV:
             case Tag.RL_AND:
                 mulop();
                 factor_a();
-                term_tail();
+                if (Tag.AR_MUL == token.tag || Tag.AR_DIV == token.tag || Tag.RL_AND == token.tag || Tag.AR_ADD == token.tag ||
+                Tag.AR_SUB == token.tag || Tag.RL_OR == token.tag || Tag.PT_SEMI == token.tag) {
+                    term_tail();
+                }
                 break;
             case Tag.AR_ADD:
             case Tag.AR_SUB:
             case Tag.RL_OR:
+            case Tag.PT_CPAR:
+            case Tag.PT_SEMI:
                 break;
             default:
                 error("Syntax error _term-tail_ --> Missing multiplicative operator or missing additive operator or missing relational operator '||'");
@@ -390,6 +423,7 @@ public class Parser {
     }
 
     private void factor_a() {
+        System.out.println("factor_a");
         switch (token.tag) {
             case Tag.ID:
             case Tag.LIT_INT:
@@ -412,6 +446,7 @@ public class Parser {
     }
 
     private void factor() {
+        System.out.println("factor");
         switch (token.tag) {
             case Tag.ID:
                 identifier();
@@ -431,6 +466,7 @@ public class Parser {
     }
     
     private void relop() {
+        System.out.println("relop");
         switch (token.tag) {
             case Tag.CP_DF:
                 eat(Tag.CP_DF);
@@ -456,6 +492,7 @@ public class Parser {
     }
 
     private void addop() {
+        System.out.println("addop");
         switch (token.tag) {
             case Tag.AR_ADD:
                 eat(Tag.AR_ADD);
@@ -472,6 +509,7 @@ public class Parser {
     }
 
     private void mulop() {
+        System.out.println("mulop");
         switch (token.tag) {
             case Tag.AR_MUL:
                 eat(Tag.AR_MUL);
@@ -488,6 +526,7 @@ public class Parser {
     }
 
     private void constant() {
+        System.out.println("constant");
         switch (token.tag) {
             case Tag.LIT_INT:
                 integer_const();
@@ -504,6 +543,7 @@ public class Parser {
     }
 
     private void integer_const() {
+        System.out.println("integer_const");
         switch (token.tag) {
             case Tag.LIT_INT:
                 eat(Tag.LIT_INT);
@@ -514,6 +554,7 @@ public class Parser {
     }
 
     private void float_const() {
+        System.out.println("float_const");
         switch (token.tag) {
             case Tag.LIT_FLOAT:
                 eat(Tag.LIT_FLOAT);
@@ -524,12 +565,11 @@ public class Parser {
     }
 
     private void literal() {
+        System.out.println("literal");
         switch (token.tag) {
             case Tag.PT_OBRA:
                 eat(Tag.PT_OBRA);
-                while (token.tag == Tag.LIT_STRING) {
-                    eat(Tag.LIT_STRING);
-                }
+                eat(Tag.LIT_STRING);
                 eat(Tag.PT_CBRA);
                 break;
             default:
@@ -538,6 +578,7 @@ public class Parser {
     }
 
     private void identifier() {
+        System.out.println("identifier");
         switch (token.tag) {
             case Tag.ID:
                 eat(Tag.ID);
