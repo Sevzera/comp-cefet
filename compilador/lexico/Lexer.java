@@ -2,6 +2,7 @@ package lexico;
 
 import java.io.*;
 import java.util.*;
+
 import lexico.tokens.*;
 
 public class Lexer {
@@ -64,7 +65,8 @@ public class Lexer {
 
     // le o proximo caractere
     private void readch() throws IOException {
-        oldChar = ch;
+        if (ch != ' ')
+            oldChar = ch;
         ch = (char) file.read();
     }
 
@@ -127,6 +129,20 @@ public class Lexer {
                 return scan();
             }
         }
+
+        // identifica strings literais
+        if (oldChar == '{') {
+            StringBuffer sb = new StringBuffer();
+            do {
+                sb.append(ch);
+                readch();
+                if (ch == '\n') {
+                    line++;
+                }
+            } while (ch != '}' && (int) ch != 65535);
+            return new LiteralString(sb.toString()); // string literal
+        }
+
         // identifica pontuacao
         switch (ch) {
             case ';':
@@ -204,6 +220,7 @@ public class Lexer {
                 else
                     return Word.lt;
         }
+
         // identifica numeros literais
         if (Character.isDigit(ch)) {
             int value = 0;
@@ -224,15 +241,7 @@ public class Lexer {
             } while (Character.isDigit(ch));
             return new LiteralFloat(valuef); // numero de ponto flutuante literal
         }
-        // identifica strings literais
-        if (oldChar == '{') {
-            StringBuffer sb = new StringBuffer();
-            do {
-                sb.append(ch);
-                readch();
-            } while (ch != '}' && (int) ch != 65535);
-            return new LiteralString(sb.toString()); // string literal
-        }
+
         // identifica identificadores e palavras reservadas
         if (Character.isLetter(ch) || ch == '_') {
             StringBuffer sb = new StringBuffer();
@@ -248,6 +257,7 @@ public class Lexer {
             words.put(s, w);
             return w; // identificador
         }
+
         // gera tokens genericos para padroes desconhecidos e adiciona a tabela de erros
         Token t = new Token(ch);
         if (t.tag != 65535)

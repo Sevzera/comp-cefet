@@ -1,0 +1,32 @@
+// Comentario simples fechado
+
+/*
+Comentario de linha multipla fechado
+*/
+
+/*
+Comentario de linha multipla aberto
+*/
+
+start
+
+    int a;
+    float b;
+    string c;
+
+    print({1!});
+    print({2});
+    print({3});
+    print({4});
+    print({5});
+    print({6});
+    
+    scan(a);
+    scan(b);
+    scan(c);
+
+    if (a>b) then
+        c = b;
+    end
+
+exit

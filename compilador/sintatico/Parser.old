@@ -171,7 +171,7 @@ public class Parser {
                 simple_expression();
                 break;
             default:
-                error("Syntax error _assign-stmt_ --> Missing identifier or missing assignment operator or identifier is not declared or wrong command");
+                error("Syntax error _assign-stmt_ --> Missing identifier or missing assignment operator");
         }
     }
 
@@ -370,17 +370,16 @@ public class Parser {
                     simple_expression_tail();
                 }
                 break;
-            case Tag.AR_MUL:
-            case Tag.AR_DIV:
-            case Tag.RL_AND:
             case Tag.CP_DF:
             case Tag.CP_EQ:
             case Tag.CP_GE:
             case Tag.CP_GT:
             case Tag.CP_LE:
             case Tag.CP_LT:
+            case Tag.AR_MUL:
+            case Tag.AR_DIV:
+            case Tag.RL_AND:
             case Tag.RW_THEN:
-            case Tag.RW_END:
             case Tag.PT_CPAR:
             case Tag.PT_SEMI:
                 break;
@@ -431,7 +430,6 @@ public class Parser {
             case Tag.CP_LE:
             case Tag.CP_LT:
             case Tag.RW_THEN:
-            case Tag.RW_END:
             case Tag.PT_CPAR:
             case Tag.PT_SEMI:
                 break;
