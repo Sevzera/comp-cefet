@@ -89,7 +89,7 @@ public class Lexer {
         }
         // identifica comentarios
         int line_aux = 0;
-        while (ch == '/') {
+        if (ch == '/') {
             readch();
             if (ch == '/') {
                 do {
@@ -118,13 +118,13 @@ public class Lexer {
             } else {
                 return Word.div;
             }
-            if(ch == 65535) {
+            if (ch == 65535) {
                 Token t = new Token('*');
-                    errors.put(t, line_aux);
-                    return t;
+                errors.put(t, line_aux);
+                return t;
             }
-            if (ch == ' ' || ch == '\t' || ch == '\r' || ch == '\b') {
-                ch = '/';
+            if (ch == ' ' || ch == '\t' || ch == '\r' || ch == '\b' || ch == '\n') {
+                return scan();
             }
         }
         // identifica pontuacao

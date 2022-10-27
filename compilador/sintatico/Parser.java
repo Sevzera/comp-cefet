@@ -19,7 +19,7 @@ public class Parser {
     }
 
     private void advance() {
-        try{
+        try {
             token = lexer.scan(); // lê próximo token
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -29,7 +29,7 @@ public class Parser {
     private void eat(int tag) {
         if (token.tag == tag)
             advance();
-        else 
+        else
             error("Syntax error --> Missing token: " + tag);
     }
 
@@ -99,7 +99,7 @@ public class Parser {
         }
     }
 
-    private void type () {
+    private void type() {
         System.out.println("type");
         switch (token.tag) {
             case Tag.TYPE_INT:
@@ -112,7 +112,7 @@ public class Parser {
                 eat(Tag.TYPE_STRING);
                 break;
             default:
-                error("Syntax error _type_ --> Missing type declaration (int, float or string)"); 
+                error("Syntax error _type_ --> Missing type declaration (int, float or string)");
         }
     }
 
@@ -125,7 +125,8 @@ public class Parser {
             case Tag.RW_SCAN:
             case Tag.RW_PRINT:
                 stmt();
-                while (token.tag == Tag.ID || token.tag == Tag.RW_IF || token.tag == Tag.RW_DO || token.tag == Tag.RW_SCAN || token.tag == Tag.RW_PRINT) {
+                while (token.tag == Tag.ID || token.tag == Tag.RW_IF || token.tag == Tag.RW_DO
+                        || token.tag == Tag.RW_SCAN || token.tag == Tag.RW_PRINT) {
                     stmt();
                     System.out.println("\n");
                 }
@@ -210,7 +211,7 @@ public class Parser {
             case Tag.ID:
             case Tag.LIT_INT:
             case Tag.LIT_FLOAT:
-            case Tag.LIT_STRING:
+            case Tag.PT_OBRA:
             case Tag.PT_OPAR:
             case Tag.RL_NOT:
             case Tag.AR_SUB:
@@ -221,7 +222,7 @@ public class Parser {
         }
     }
 
-    private void while_stmt() { 
+    private void while_stmt() {
         System.out.println("while_stmt");
         switch (token.tag) {
             case Tag.RW_DO:
@@ -232,7 +233,7 @@ public class Parser {
             default:
                 error("Syntax error _while-stmt_ --> Missing 'do' keyword");
         }
-    }   
+    }
 
     private void stmt_sufix() {
         System.out.println("stmt_sufix");
@@ -281,15 +282,15 @@ public class Parser {
             case Tag.ID:
             case Tag.LIT_INT:
             case Tag.LIT_FLOAT:
-            case Tag.LIT_STRING:
+            case Tag.PT_OBRA:
             case Tag.PT_OPAR:
             case Tag.RL_NOT:
             case Tag.AR_SUB:
                 simple_expression();
                 break;
-            case Tag.PT_OBRA:
-                literal();
-                break;
+            // case Tag.PT_OBRA:
+            // literal();
+            // break;
             default:
                 error("Syntax error _writable_ --> Missing identifier or literal or constant or parenthesis or '!' or '-' or '{'");
         }
@@ -301,7 +302,7 @@ public class Parser {
             case Tag.ID:
             case Tag.LIT_INT:
             case Tag.LIT_FLOAT:
-            case Tag.LIT_STRING:
+            case Tag.PT_OBRA:
             case Tag.PT_OPAR:
             case Tag.RL_NOT:
             case Tag.AR_SUB:
@@ -340,7 +341,7 @@ public class Parser {
             case Tag.ID:
             case Tag.LIT_INT:
             case Tag.LIT_FLOAT:
-            case Tag.LIT_STRING:
+            case Tag.PT_OBRA:
             case Tag.PT_OPAR:
             case Tag.RL_NOT:
             case Tag.AR_SUB:
@@ -360,9 +361,12 @@ public class Parser {
             case Tag.RL_OR:
                 addop();
                 term();
-                if (Tag.AR_ADD == token.tag || Tag.AR_SUB == token.tag || Tag.RL_OR == token.tag || Tag.CP_DF == token.tag || 
-                Tag.CP_EQ == token.tag || Tag.CP_GE == token.tag || Tag.CP_GT == token.tag || Tag.CP_LE == token.tag || 
-                Tag.CP_LT == token.tag ||  Tag.PT_CPAR == token.tag  || Tag.PT_SEMI == token.tag) {
+                if (Tag.AR_ADD == token.tag || Tag.AR_SUB == token.tag || Tag.RL_OR == token.tag
+                        || Tag.CP_DF == token.tag ||
+                        Tag.CP_EQ == token.tag || Tag.CP_GE == token.tag || Tag.CP_GT == token.tag
+                        || Tag.CP_LE == token.tag ||
+                        Tag.CP_LT == token.tag || Tag.PT_CPAR == token.tag || Tag.PT_SEMI == token.tag
+                        || Tag.AR_MUL == token.tag || Tag.AR_DIV == token.tag || Tag.RL_AND == token.tag) {
                     simple_expression_tail();
                 }
                 break;
@@ -372,6 +376,10 @@ public class Parser {
             case Tag.CP_GT:
             case Tag.CP_LE:
             case Tag.CP_LT:
+            case Tag.AR_MUL:
+            case Tag.AR_DIV:
+            case Tag.RL_AND:
+            case Tag.RW_THEN:
             case Tag.PT_CPAR:
             case Tag.PT_SEMI:
                 break;
@@ -386,7 +394,7 @@ public class Parser {
             case Tag.ID:
             case Tag.LIT_INT:
             case Tag.LIT_FLOAT:
-            case Tag.LIT_STRING:
+            case Tag.PT_OBRA:
             case Tag.PT_OPAR:
             case Tag.RL_NOT:
             case Tag.AR_SUB:
@@ -406,14 +414,22 @@ public class Parser {
             case Tag.RL_AND:
                 mulop();
                 factor_a();
-                if (Tag.AR_MUL == token.tag || Tag.AR_DIV == token.tag || Tag.RL_AND == token.tag || Tag.AR_ADD == token.tag ||
-                Tag.AR_SUB == token.tag || Tag.RL_OR == token.tag || Tag.PT_SEMI == token.tag) {
+                if (Tag.AR_MUL == token.tag || Tag.AR_DIV == token.tag || Tag.RL_AND == token.tag
+                        || Tag.AR_ADD == token.tag ||
+                        Tag.AR_SUB == token.tag || Tag.RL_OR == token.tag || Tag.PT_SEMI == token.tag) {
                     term_tail();
                 }
                 break;
             case Tag.AR_ADD:
             case Tag.AR_SUB:
             case Tag.RL_OR:
+            case Tag.CP_DF:
+            case Tag.CP_EQ:
+            case Tag.CP_GE:
+            case Tag.CP_GT:
+            case Tag.CP_LE:
+            case Tag.CP_LT:
+            case Tag.RW_THEN:
             case Tag.PT_CPAR:
             case Tag.PT_SEMI:
                 break;
@@ -428,14 +444,14 @@ public class Parser {
             case Tag.ID:
             case Tag.LIT_INT:
             case Tag.LIT_FLOAT:
-            case Tag.LIT_STRING:
+            case Tag.PT_OBRA:
             case Tag.PT_OPAR:
                 factor();
                 break;
             case Tag.RL_NOT:
                 eat(token.tag);
                 factor();
-                break; 
+                break;
             case Tag.AR_SUB:
                 eat(token.tag);
                 factor();
@@ -453,6 +469,7 @@ public class Parser {
                 break;
             case Tag.LIT_INT:
             case Tag.LIT_FLOAT:
+            case Tag.PT_OBRA:
                 constant();
                 break;
             case Tag.PT_OPAR:
@@ -464,7 +481,7 @@ public class Parser {
                 error("Syntax error _factor_ --> Missing identifier or constant or parenthesis");
         }
     }
-    
+
     private void relop() {
         System.out.println("relop");
         switch (token.tag) {
