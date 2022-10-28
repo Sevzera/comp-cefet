@@ -5,7 +5,7 @@ print({Nome: });
 scan (nome);
 print({Sobrenome: });
 scan (sobrenome);
-msg = "Ola, " + nome + " " +
+msg = {Ola, } + nome + {" } +
 sobrenome + "!";
 msg = msg + 1;
 print (msg);
