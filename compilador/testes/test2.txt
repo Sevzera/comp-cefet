@@ -14,4 +14,4 @@ start
     print ({E: });
     print (e);
     a = (b + c + d)/2;
-    exit
+exit
