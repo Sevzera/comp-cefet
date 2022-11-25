@@ -1,4 +1,4 @@
-package lexico.tokens;
+package env.tokens;
 
 public class LiteralInteger extends Token {
     public final int value;

@@ -1,16 +1,24 @@
 package sintatico;
 
+import env.*;
+import env.tokens.Tag;
+import env.tokens.Type;
 import lexico.Lexer;
-import lexico.tokens.Token;
-import lexico.tokens.Tag;
+import semantico.Semantic;
+import env.tokens.*;;
 
 public class Parser {
 
     private Lexer lexer;
+    private Semantic semantic;
     private Token token;
 
-    public Parser(Lexer lexer) {
+    private String currentValue;
+    private int currentType;
+
+    public Parser(Lexer lexer, Semantic semantic) {
         this.lexer = lexer;
+        this.semantic = semantic;
     }
 
     public void start() {
@@ -35,7 +43,7 @@ public class Parser {
     }
 
     private void error(String msg) {
-        throw new Error("Error at line " + Lexer.line + ": " + msg + "\nError token: " + token.toString());
+        throw new Error("Error at line " + Globals.line + ": " + msg + "\nError token: " + token.toString());
     }
 
     private void program() {
@@ -90,9 +98,21 @@ public class Parser {
         switch (token.tag) {
             case Tag.ID:
                 identifier();
+                if (semantic.isDeclared(currentValue)) {
+                    error("Semantic error --> Variable " + currentValue + " already declared");
+                } else {
+                    Globals.symbolTable.put(currentValue, new Word(currentValue, Tag.ID));
+                    semantic.appendType(currentValue, currentType);
+                }
                 while (token.tag == Tag.PT_COMMA) {
                     eat(Tag.PT_COMMA);
                     identifier();
+                    if (semantic.isDeclared(currentValue)) {
+                        error("Semantic error --> Variable " + currentValue + " already declared");
+                    } else {
+                        Globals.symbolTable.put(currentValue, new Word(currentValue, Tag.ID));
+                        semantic.appendType(currentValue, currentType);
+                    }
                 }
                 break;
             default:
@@ -104,12 +124,15 @@ public class Parser {
         // System.out.println("type");
         switch (token.tag) {
             case Tag.TYPE_INT:
+                currentType = Type.INT;
                 eat(Tag.TYPE_INT);
                 break;
             case Tag.TYPE_FLOAT:
+                currentType = Type.FLOAT;
                 eat(Tag.TYPE_FLOAT);
                 break;
             case Tag.TYPE_STRING:
+                currentType = Type.STRING;
                 eat(Tag.TYPE_STRING);
                 break;
             default:
@@ -129,7 +152,6 @@ public class Parser {
                 while (token.tag == Tag.ID || token.tag == Tag.RW_IF || token.tag == Tag.RW_DO
                         || token.tag == Tag.RW_SCAN || token.tag == Tag.RW_PRINT) {
                     stmt();
-                    // System.out.println("\n");
                 }
                 break;
             default:
@@ -168,12 +190,22 @@ public class Parser {
         switch (token.tag) {
             case Tag.ID:
                 identifier();
-                eat(Tag.AR_ASG);
-                simple_expression();
+                if (semantic.isDeclared(currentValue)) {
+                    int leftType = semantic.getIDType(currentValue);
+                    eat(Tag.AR_ASG);
+                    simple_expression();
+                    int rightType = currentType;
+                    if (leftType != rightType) {
+                        error("Semantic error _assign-stmt_ --> Type mismatch");
+                    }
+                } else {
+                    error("Semantic error _assign-stmt_ --> Identifier not declared");
+                }
                 break;
             default:
                 error("Syntax error _assign-stmt_ --> Missing identifier or missing assignment operator or identifier is not declared or wrong command");
         }
+
     }
 
     private void if_stmt() {
@@ -256,7 +288,10 @@ public class Parser {
                 eat(Tag.RW_SCAN);
                 eat(Tag.PT_OPAR);
                 identifier();
-                eat(Tag.PT_CPAR);
+                if (semantic.isDeclared(currentValue))
+                    eat(Tag.PT_CPAR);
+                else
+                    error("Semantic error _read-stmt_ --> Identifier not declared");
                 break;
             default:
                 error("Syntax error _read-stmt_ --> Missing 'scan' keyword or missing parenthesis");
@@ -289,9 +324,6 @@ public class Parser {
             case Tag.AR_SUB:
                 simple_expression();
                 break;
-            // case Tag.PT_OBRA:
-            // literal();
-            // break;
             default:
                 error("Syntax error _writable_ --> Missing identifier or literal or constant or parenthesis or '!' or '-' or '{'");
         }
@@ -324,8 +356,13 @@ public class Parser {
             case Tag.CP_GT:
             case Tag.CP_LE:
             case Tag.CP_LT:
+                int leftType = currentType;
                 relop();
                 simple_expression();
+                int rightType = currentType;
+                if (leftType != rightType) {
+                    error("Semantic error _expression-tail_ --> Type mismatch");
+                }
                 break;
             case Tag.RW_THEN:
             case Tag.RW_END:
@@ -360,8 +397,13 @@ public class Parser {
             case Tag.AR_ADD:
             case Tag.AR_SUB:
             case Tag.RL_OR:
+                int leftType = currentType;
                 addop();
                 term();
+                int rightType = currentType;
+                if (leftType != rightType) {
+                    error("Semantic error _simple-expression-tail_ --> Type mismatch");
+                }
                 if (Tag.AR_ADD == token.tag || Tag.AR_SUB == token.tag || Tag.RL_OR == token.tag
                         || Tag.CP_DF == token.tag ||
                         Tag.CP_EQ == token.tag || Tag.CP_GE == token.tag || Tag.CP_GT == token.tag
@@ -414,8 +456,13 @@ public class Parser {
             case Tag.AR_MUL:
             case Tag.AR_DIV:
             case Tag.RL_AND:
+                int leftType = currentType;
                 mulop();
                 factor_a();
+                int rightType = currentType;
+                if (leftType != rightType) {
+                    error("Semantic error _term-tail_ --> Type mismatch");
+                }
                 if (Tag.AR_MUL == token.tag || Tag.AR_DIV == token.tag || Tag.RL_AND == token.tag
                         || Tag.AR_ADD == token.tag ||
                         Tag.AR_SUB == token.tag || Tag.RL_OR == token.tag || Tag.PT_SEMI == token.tag) {
@@ -452,11 +499,11 @@ public class Parser {
                 factor();
                 break;
             case Tag.RL_NOT:
-                eat(token.tag);
+                eat(Tag.RL_NOT);
                 factor();
                 break;
             case Tag.AR_SUB:
-                eat(token.tag);
+                eat(Tag.AR_SUB);
                 factor();
                 break;
             default:
@@ -469,7 +516,11 @@ public class Parser {
         switch (token.tag) {
             case Tag.ID:
                 identifier();
-                break;
+                if (semantic.isDeclared(currentValue)) {
+                    currentType = semantic.getIDType(currentValue);
+                    break;
+                } else
+                    error("Semantic error _factor_ --> Identifier '" + currentValue + "' is not declared");
             case Tag.LIT_INT:
             case Tag.LIT_FLOAT:
             case Tag.PT_OBRA:
@@ -566,7 +617,13 @@ public class Parser {
         // System.out.println("integer_const");
         switch (token.tag) {
             case Tag.LIT_INT:
-                eat(Tag.LIT_INT);
+                if (token.tag == Tag.LIT_INT) {
+                    currentValue = Integer.toString(((LiteralInteger) token).value);
+                    currentType = Type.INT;
+                    eat(Tag.LIT_INT);
+                } else {
+                    error("Semantic error _float-const_ --> Missing float constant");
+                }
                 break;
             default:
                 error("Syntax error _integer-const_ --> Missing integer constant");
@@ -577,7 +634,13 @@ public class Parser {
         // System.out.println("float_const");
         switch (token.tag) {
             case Tag.LIT_FLOAT:
-                eat(Tag.LIT_FLOAT);
+                if (token.tag == Tag.LIT_FLOAT) {
+                    currentValue = Float.toString(((LiteralFloat) token).value);
+                    currentType = Type.FLOAT;
+                    eat(Tag.LIT_FLOAT);
+                } else {
+                    error("Semantic error _float-const_ --> Missing float constant");
+                }
                 break;
             default:
                 error("Syntax error _float-const_ --> Missing float constant");
@@ -589,7 +652,13 @@ public class Parser {
         switch (token.tag) {
             case Tag.PT_OBRA:
                 eat(Tag.PT_OBRA);
-                eat(Tag.LIT_STRING);
+                if (token.tag == Tag.LIT_STRING) {
+                    currentValue = ((LiteralString) token).value;
+                    currentType = Type.STRING;
+                    eat(Tag.LIT_STRING);
+                } else {
+                    error("Semantic error _literal_ --> Missing string constant");
+                }
                 eat(Tag.PT_CBRA);
                 break;
             default:
@@ -601,6 +670,7 @@ public class Parser {
         // System.out.println("identifier");
         switch (token.tag) {
             case Tag.ID:
+                currentValue = ((Word) token).lexeme;
                 eat(Tag.ID);
                 break;
             default:

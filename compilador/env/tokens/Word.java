@@ -1,7 +1,10 @@
-package lexico.tokens;
+package env.tokens;
 
 public class Word extends Token {
-    private String lexeme = "";
+    public String lexeme = null;
+    public String value;
+    public int type;
+
     public static final Word start = new Word("start", Tag.RW_START);
     public static final Word exit = new Word("exit", Tag.RW_EXIT);
     public static final Word end = new Word("end", Tag.RW_END);
@@ -40,10 +43,6 @@ public class Word extends Token {
     public Word(String s, int tag) {
         super(tag);
         lexeme = s;
-    }
-
-    public String getLexeme() {
-        return lexeme;
     }
 
     public String toString() {

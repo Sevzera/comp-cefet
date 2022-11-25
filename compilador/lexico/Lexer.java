@@ -1,21 +1,18 @@
 package lexico;
 
 import java.io.*;
-import java.util.*;
 
-import lexico.tokens.*;
+import env.*;
+import env.tokens.*;
 
 public class Lexer {
-    public static int line = 1; // contador de linhas
     private char ch = ' '; // caractere lido do arquivo
     private char oldChar = ' '; // salva o ch anterior
     private FileReader file;
-    public static Hashtable<String, Word> words = new Hashtable<String, Word>(); // tabela de simbolos
-    public static Hashtable<Token, Integer> errors = new Hashtable<Token, Integer>(); // tabela de erros
 
     // insere uma palavra diretamente na tabela de simbolos
     private void reserve(Word w) {
-        words.put(w.getLexeme(), w);
+        Globals.symbolTable.put(w.lexeme, w);
     }
 
     // constroi o lexer e insere as palavras reservadas diretamente na tabela de
@@ -85,7 +82,7 @@ public class Lexer {
             if (ch == ' ' || ch == '\t' || ch == '\r' || ch == '\b')
                 continue;
             else if (ch == '\n')
-                line++; // conta linhas
+                Globals.line++; // conta linhas
             else
                 break;
         }
@@ -98,16 +95,16 @@ public class Lexer {
                     readch();
                     if (ch == '\n') {
                         readch();
-                        line++;
+                        Globals.line++;
                         break;
                     }
                 } while ((int) ch != 65535);
             } else if (ch == '*') {
-                line_aux = line;
+                line_aux = Globals.line;
                 do {
                     readch();
                     if (ch == '\n') {
-                        line++;
+                        Globals.line++;
                     }
                     if (ch == '*') {
                         readch();
@@ -121,8 +118,8 @@ public class Lexer {
                 return Word.div;
             }
             if (ch == 65535) {
-                Token t = new Token('*');
-                errors.put(t, line_aux);
+                Token t = new Token(Tag.EOF);
+                Globals.errorTable.put(t, line_aux);
                 return t;
             }
             if (ch == ' ' || ch == '\t' || ch == '\r' || ch == '\b' || ch == '\n') {
@@ -137,7 +134,7 @@ public class Lexer {
                 sb.append(ch);
                 readch();
                 if (ch == '\n') {
-                    line++;
+                    Globals.line++;
                 }
             } while (ch != '}' && (int) ch != 65535);
             return new LiteralString(sb.toString()); // string literal
@@ -175,7 +172,7 @@ public class Lexer {
                     return Word.and; // &&
                 else {
                     Token t = new Token('&');
-                    errors.put(t, line);
+                    Globals.errorTable.put(t, Globals.line);
                     return t;
                 }
             case '|':
@@ -183,7 +180,7 @@ public class Lexer {
                     return Word.or;
                 else {
                     Token t = new Token('|');
-                    errors.put(t, line);
+                    Globals.errorTable.put(t, Globals.line);
                     return t;
                 }
             case '!':
@@ -250,18 +247,17 @@ public class Lexer {
                 readch();
             } while (Character.isLetterOrDigit(ch));
             String s = sb.toString();
-            Word w = (Word) words.get(s);
+            Word w = (Word) Globals.symbolTable.get(s);
             if (w != null)
                 return w; // palavra reservada
             w = new Word(s, Tag.ID);
-            words.put(s, w);
             return w; // identificador
         }
 
         // gera tokens genericos para padroes desconhecidos e adiciona a tabela de erros
         Token t = new Token(ch);
         if (t.tag != 65535)
-            errors.put(t, line);
+            Globals.errorTable.put(t, Globals.line);
         ch = ' ';
         return t;
     }

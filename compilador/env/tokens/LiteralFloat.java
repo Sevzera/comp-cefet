@@ -1,4 +1,4 @@
-package lexico.tokens;
+package env.tokens;
 
 public class LiteralFloat extends Token {
     public final float value;

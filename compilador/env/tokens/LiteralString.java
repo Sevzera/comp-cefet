@@ -1,5 +1,5 @@
 
-package lexico.tokens;
+package env.tokens;
 
 public class LiteralString extends Token {
     public final String value;

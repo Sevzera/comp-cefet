@@ -1,0 +1,12 @@
+start
+    int a, b, aux;
+    float c;
+    a = 1;
+    b = 2;
+    c = 5.5;
+    if (b>c) then
+        aux = b;
+        b = a;
+        a = aux;
+    end
+exit
