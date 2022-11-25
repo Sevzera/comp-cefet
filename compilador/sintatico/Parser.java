@@ -690,10 +690,17 @@ public class Parser {
             case Tag.RL_NOT:
                 eat(Tag.RL_NOT);
                 factor();
+                currentValue = String.valueOf(!Boolean.parseBoolean(currentValue));
                 break;
             case Tag.AR_SUB:
                 eat(Tag.AR_SUB);
                 factor();
+                if (currentType == Type.INT)
+                    currentValue = String.valueOf(-Integer.parseInt(currentValue));
+                else if (currentType == Type.FLOAT)
+                    currentValue = String.valueOf(-Float.parseFloat(currentValue));
+                else if (currentType == Type.STRING)
+                    error("Semantic error _factor-a_ --> Invalid op for type");
                 break;
             default:
                 error("Syntax error _factor-a_ --> Missing identifier or literal or constant or parenthesis or '!' or '-'");

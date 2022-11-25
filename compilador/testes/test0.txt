@@ -1,6 +1,6 @@
 start
-    float a, b, c;
-    a = 187.14;
-    b = 1992.3213;
-    c = a + b;
+    int a, b;
+    a = 10;
+    b = 20;
+    print(a>b);
 exit

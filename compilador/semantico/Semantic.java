@@ -1,7 +1,7 @@
 package semantico;
 
 import env.*;
-import env.tokens.Word;
+import env.tokens.*;
 
 public class Semantic {
 
@@ -9,7 +9,7 @@ public class Semantic {
     }
 
     public boolean isDeclared(String lexeme) {
-        if (Globals.symbolTable.containsKey(lexeme)) {
+        if (Globals.symbolTable.containsKey(lexeme) && Globals.symbolTable.get(lexeme).tag == Tag.ID) {
             return true;
         }
         return false;
