@@ -531,14 +531,8 @@ public class Parser {
                                 error("Semantic error _simple-expression-tail_ --> Invalid op for type");
                             break;
                         case "||":
-                            if (currentType == Type.INT)
-                                currentValue = String.valueOf((Integer.parseInt(leftValue) > 0)
-                                        || (Integer.parseInt(rightValue) > 0));
-                            else if (currentType == Type.FLOAT)
-                                currentValue = String.valueOf((Float.parseFloat(leftValue) > 0)
-                                        || (Float.parseFloat(rightValue) > 0));
-                            else if (currentType == Type.STRING)
-                                error("Semantic error _simple-expression-tail_ --> Invalid op for type");
+                            currentValue = String
+                                    .valueOf(Boolean.parseBoolean(leftValue) || Boolean.parseBoolean(rightValue));
                             break;
                         default:
                             error("Semantic error _simple-expression-tail_ --> Invalid op");
@@ -640,14 +634,8 @@ public class Parser {
                                 error("Semantic error _simple-expression-tail_ --> Invalid op for type");
                             break;
                         case "&&":
-                            if (currentType == Type.INT)
-                                currentValue = String.valueOf((Integer.parseInt(leftValue) > 0)
-                                        && (Integer.parseInt(rightValue) > 0));
-                            else if (currentType == Type.FLOAT)
-                                currentValue = String.valueOf((Float.parseFloat(leftValue) > 0)
-                                        && (Float.parseFloat(rightValue) > 0));
-                            else if (currentType == Type.STRING)
-                                error("Semantic error _simple-expression-tail_ --> Invalid op for type");
+                            currentValue = String
+                                    .valueOf(Boolean.parseBoolean(leftValue) && Boolean.parseBoolean(rightValue));
                             break;
                         default:
                             error("Semantic error _simple-expression-tail_ --> Invalid op");
