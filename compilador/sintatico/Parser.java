@@ -1,5 +1,7 @@
 package sintatico;
 
+import java.util.Scanner;
+
 import env.*;
 import env.tokens.Tag;
 import env.tokens.Type;
@@ -16,7 +18,10 @@ public class Parser {
     private String currentValue;
     private int currentType;
 
-    public Parser(Lexer lexer, Semantic semantic) {
+    Scanner input = new Scanner(System.in);
+
+    public Parser(
+            Lexer lexer, Semantic semantic) {
         this.lexer = lexer;
         this.semantic = semantic;
     }
@@ -297,9 +302,10 @@ public class Parser {
                 eat(Tag.RW_SCAN);
                 eat(Tag.PT_OPAR);
                 identifier();
-                if (semantic.isDeclared(currentValue))
+                if (semantic.isDeclared(currentValue)) {
+                    semantic.appendValue(currentValue, input.nextLine());
                     eat(Tag.PT_CPAR);
-                else
+                } else
                     error("Semantic error _read-stmt_ --> Identifier not declared");
                 break;
             default:
@@ -315,6 +321,10 @@ public class Parser {
                 eat(Tag.PT_OPAR);
                 writable();
                 eat(Tag.PT_CPAR);
+                if (semantic.isDeclared(currentValue))
+                    System.out.println(semantic.getIDValue(currentValue));
+                else
+                    System.out.println(currentValue);
                 break;
             default:
                 error("Syntax error _write-stmt_ --> Missing 'print' keyword or missing parenthesis");
