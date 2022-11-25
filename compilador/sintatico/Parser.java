@@ -639,7 +639,7 @@ public class Parser {
                             else if (currentType == Type.STRING)
                                 error("Semantic error _simple-expression-tail_ --> Invalid op for type");
                             break;
-                        case "||":
+                        case "&&":
                             if (currentType == Type.INT)
                                 currentValue = String.valueOf((Integer.parseInt(leftValue) > 0)
                                         && (Integer.parseInt(rightValue) > 0));
