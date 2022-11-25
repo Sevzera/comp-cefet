@@ -192,11 +192,20 @@ public class Parser {
                 identifier();
                 if (semantic.isDeclared(currentValue)) {
                     int leftType = semantic.getIDType(currentValue);
+                    String leftValue = currentValue;
                     eat(Tag.AR_ASG);
                     simple_expression();
                     int rightType = currentType;
+                    String rightValue = "";
+                    if (semantic.isDeclared(currentValue)) {
+                        rightValue = semantic.getIDValue(currentValue);
+                    } else {
+                        rightValue = currentValue;
+                    }
                     if (leftType != rightType) {
                         error("Semantic error _assign-stmt_ --> Type mismatch");
+                    } else {
+                        semantic.appendValue(leftValue, rightValue);
                     }
                 } else {
                     error("Semantic error _assign-stmt_ --> Identifier not declared");
@@ -357,11 +366,94 @@ public class Parser {
             case Tag.CP_LE:
             case Tag.CP_LT:
                 int leftType = currentType;
+                String leftValue = "";
+                if (semantic.isDeclared(currentValue)) {
+                    leftValue = semantic.getIDValue(currentValue);
+                } else {
+                    leftValue = currentValue;
+                }
                 relop();
+                String op = currentValue;
                 simple_expression();
                 int rightType = currentType;
+                String rightValue = "";
+                if (semantic.isDeclared(currentValue)) {
+                    rightValue = semantic.getIDValue(currentValue);
+                } else {
+                    rightValue = currentValue;
+                }
                 if (leftType != rightType) {
                     error("Semantic error _expression-tail_ --> Type mismatch");
+                } else {
+                    switch (op) {
+                        case "!=":
+                            if (currentType == Type.INT)
+                                currentValue = String
+                                        .valueOf(Integer.parseInt(leftValue) != Integer.parseInt(rightValue));
+                            else if (currentType == Type.FLOAT)
+                                currentValue = String
+                                        .valueOf(Float.parseFloat(leftValue) != Float.parseFloat(rightValue));
+                            else if (currentType == Type.STRING)
+                                currentValue = String.valueOf(!leftValue.equals(rightValue));
+                            break;
+                        case "==":
+                            if (currentType == Type.INT)
+                                currentValue = String
+                                        .valueOf(Integer.parseInt(leftValue) == Integer.parseInt(rightValue));
+                            else if (currentType == Type.FLOAT)
+                                currentValue = String
+                                        .valueOf(Float.parseFloat(leftValue) == Float.parseFloat(rightValue));
+                            else if (currentType == Type.STRING)
+                                currentValue = String.valueOf(leftValue.equals(rightValue));
+                            break;
+                        case ">=":
+                            if (currentType == Type.INT)
+                                currentValue = String
+                                        .valueOf(Integer.parseInt(leftValue) >= Integer.parseInt(rightValue));
+                            else if (currentType == Type.FLOAT)
+                                currentValue = String
+                                        .valueOf(Float.parseFloat(leftValue) >= Float.parseFloat(rightValue));
+                            else if (currentType == Type.STRING)
+                                error("Semantic error _expression-tail_ --> Invalid op for type");
+                            // currentValue = String.valueOf(leftValue.compareTo(rightValue) >= 0);
+                            break;
+                        case ">":
+                            if (currentType == Type.INT)
+                                currentValue = String
+                                        .valueOf(Integer.parseInt(leftValue) > Integer.parseInt(rightValue));
+                            else if (currentType == Type.FLOAT)
+                                currentValue = String
+                                        .valueOf(Float.parseFloat(leftValue) > Float.parseFloat(rightValue));
+                            else if (currentType == Type.STRING)
+                                error("Semantic error _expression-tail_ --> Invalid op for type");
+                            // currentValue = String.valueOf(leftValue.compareTo(rightValue) > 0);
+                            break;
+                        case "<=":
+                            if (currentType == Type.INT)
+                                currentValue = String
+                                        .valueOf(Integer.parseInt(leftValue) <= Integer.parseInt(rightValue));
+                            else if (currentType == Type.FLOAT)
+                                currentValue = String
+                                        .valueOf(Float.parseFloat(leftValue) <= Float.parseFloat(rightValue));
+                            else if (currentType == Type.STRING)
+                                error("Semantic error _expression-tail_ --> Invalid op for type");
+                            // currentValue = String.valueOf(leftValue.compareTo(rightValue) <= 0);
+                            break;
+                        case "<":
+                            if (currentType == Type.INT)
+                                currentValue = String
+                                        .valueOf(Integer.parseInt(leftValue) < Integer.parseInt(rightValue));
+                            else if (currentType == Type.FLOAT)
+                                currentValue = String
+                                        .valueOf(Float.parseFloat(leftValue) < Float.parseFloat(rightValue));
+                            else if (currentType == Type.STRING)
+                                error("Semantic error _expression-tail_ --> Invalid op for type");
+                            // currentValue = String.valueOf(leftValue.compareTo(rightValue) < 0);
+                            break;
+                        default:
+                            error("Semantic error _simple-expression-tail_ --> Invalid op");
+                            break;
+                    }
                 }
                 break;
             case Tag.RW_THEN:
@@ -398,11 +490,60 @@ public class Parser {
             case Tag.AR_SUB:
             case Tag.RL_OR:
                 int leftType = currentType;
+                String leftValue = "";
+                if (semantic.isDeclared(currentValue)) {
+                    leftValue = semantic.getIDValue(currentValue);
+                } else {
+                    leftValue = currentValue;
+                }
                 addop();
+                String op = currentValue;
                 term();
                 int rightType = currentType;
+                String rightValue = "";
+                if (semantic.isDeclared(currentValue)) {
+                    rightValue = semantic.getIDValue(currentValue);
+                } else {
+                    rightValue = currentValue;
+                }
                 if (leftType != rightType) {
                     error("Semantic error _simple-expression-tail_ --> Type mismatch");
+                } else {
+                    switch (op) {
+                        case "+":
+                            if (currentType == Type.INT)
+                                currentValue = String
+                                        .valueOf(Integer.parseInt(leftValue) + Integer.parseInt(rightValue));
+                            else if (currentType == Type.FLOAT)
+                                currentValue = String
+                                        .valueOf(Float.parseFloat(leftValue) + Float.parseFloat(rightValue));
+                            else if (currentType == Type.STRING)
+                                currentValue = leftValue + rightValue;
+                            break;
+                        case "-":
+                            if (currentType == Type.INT)
+                                currentValue = String
+                                        .valueOf(Integer.parseInt(leftValue) - Integer.parseInt(rightValue));
+                            else if (currentType == Type.FLOAT)
+                                currentValue = String
+                                        .valueOf(Float.parseFloat(leftValue) - Float.parseFloat(rightValue));
+                            else if (currentType == Type.STRING)
+                                error("Semantic error _simple-expression-tail_ --> Invalid op for type");
+                            break;
+                        case "||":
+                            if (currentType == Type.INT)
+                                currentValue = String.valueOf((Integer.parseInt(leftValue) > 0)
+                                        || (Integer.parseInt(rightValue) > 0));
+                            else if (currentType == Type.FLOAT)
+                                currentValue = String.valueOf((Float.parseFloat(leftValue) > 0)
+                                        || (Float.parseFloat(rightValue) > 0));
+                            else if (currentType == Type.STRING)
+                                error("Semantic error _simple-expression-tail_ --> Invalid op for type");
+                            break;
+                        default:
+                            error("Semantic error _simple-expression-tail_ --> Invalid op");
+                            break;
+                    }
                 }
                 if (Tag.AR_ADD == token.tag || Tag.AR_SUB == token.tag || Tag.RL_OR == token.tag
                         || Tag.CP_DF == token.tag ||
@@ -457,11 +598,61 @@ public class Parser {
             case Tag.AR_DIV:
             case Tag.RL_AND:
                 int leftType = currentType;
+                String leftValue = "";
+                if (semantic.isDeclared(currentValue)) {
+                    leftValue = semantic.getIDValue(currentValue);
+                } else {
+                    leftValue = currentValue;
+                }
                 mulop();
+                String op = currentValue;
                 factor_a();
                 int rightType = currentType;
+                String rightValue = "";
+                if (semantic.isDeclared(currentValue)) {
+                    rightValue = semantic.getIDValue(currentValue);
+                } else {
+                    rightValue = currentValue;
+                }
                 if (leftType != rightType) {
                     error("Semantic error _term-tail_ --> Type mismatch");
+                } else {
+                    switch (op) {
+                        case "*":
+                            if (currentType == Type.INT)
+                                currentValue = String
+                                        .valueOf(Integer.parseInt(leftValue) * Integer.parseInt(rightValue));
+                            else if (currentType == Type.FLOAT)
+                                currentValue = String
+                                        .valueOf(Float.parseFloat(leftValue) * Float.parseFloat(rightValue));
+                            else if (currentType == Type.STRING)
+                                error("Semantic error _simple-expression-tail_ --> Invalid op for type");
+                            break;
+                        case "/":
+                            if (currentType == Type.INT) {
+                                currentType = Type.FLOAT;
+                                currentValue = String
+                                        .valueOf(Float.parseFloat(leftValue) / Float.parseFloat(rightValue));
+                            } else if (currentType == Type.FLOAT)
+                                currentValue = String
+                                        .valueOf(Float.parseFloat(leftValue) / Float.parseFloat(rightValue));
+                            else if (currentType == Type.STRING)
+                                error("Semantic error _simple-expression-tail_ --> Invalid op for type");
+                            break;
+                        case "||":
+                            if (currentType == Type.INT)
+                                currentValue = String.valueOf((Integer.parseInt(leftValue) > 0)
+                                        && (Integer.parseInt(rightValue) > 0));
+                            else if (currentType == Type.FLOAT)
+                                currentValue = String.valueOf((Float.parseFloat(leftValue) > 0)
+                                        && (Float.parseFloat(rightValue) > 0));
+                            else if (currentType == Type.STRING)
+                                error("Semantic error _simple-expression-tail_ --> Invalid op for type");
+                            break;
+                        default:
+                            error("Semantic error _simple-expression-tail_ --> Invalid op");
+                            break;
+                    }
                 }
                 if (Tag.AR_MUL == token.tag || Tag.AR_DIV == token.tag || Tag.RL_AND == token.tag
                         || Tag.AR_ADD == token.tag ||
@@ -540,21 +731,27 @@ public class Parser {
         // System.out.println("relop");
         switch (token.tag) {
             case Tag.CP_DF:
+                currentValue = "!=";
                 eat(Tag.CP_DF);
                 break;
             case Tag.CP_EQ:
+                currentValue = "==";
                 eat(Tag.CP_EQ);
                 break;
             case Tag.CP_GE:
+                currentValue = ">=";
                 eat(Tag.CP_GE);
                 break;
             case Tag.CP_GT:
+                currentValue = ">";
                 eat(Tag.CP_GT);
                 break;
             case Tag.CP_LE:
+                currentValue = "<=";
                 eat(Tag.CP_LE);
                 break;
             case Tag.CP_LT:
+                currentValue = "<";
                 eat(Tag.CP_LT);
                 break;
             default:
@@ -566,12 +763,15 @@ public class Parser {
         // System.out.println("addop");
         switch (token.tag) {
             case Tag.AR_ADD:
+                currentValue = "+";
                 eat(Tag.AR_ADD);
                 break;
             case Tag.AR_SUB:
+                currentValue = "-";
                 eat(Tag.AR_SUB);
                 break;
             case Tag.RL_OR:
+                currentValue = "||";
                 eat(Tag.RL_OR);
                 break;
             default:
@@ -583,12 +783,15 @@ public class Parser {
         // System.out.println("mulop");
         switch (token.tag) {
             case Tag.AR_MUL:
+                currentValue = "*";
                 eat(Tag.AR_MUL);
                 break;
             case Tag.AR_DIV:
+                currentValue = "/";
                 eat(Tag.AR_DIV);
                 break;
             case Tag.RL_AND:
+                currentValue = "&&";
                 eat(Tag.RL_AND);
                 break;
             default:
