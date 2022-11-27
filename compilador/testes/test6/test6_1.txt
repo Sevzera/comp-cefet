@@ -1,9 +1,12 @@
 // Comentario simples fechado
+
 /*
 Comentario de linha multipla fechado
 */
+
 /*
 Comentario de linha multipla aberto
+*/
 
 start
 
@@ -16,7 +19,7 @@ start
     print({3});
     print({4});
     print({5});
-    prin({6});
+    print({6});
     
     scan(a);
     scan(b);
@@ -24,6 +27,6 @@ start
 
     if (a>b) then
         c = b;
-    end;
+    end
 
 exit

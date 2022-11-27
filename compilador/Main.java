@@ -5,7 +5,6 @@ import env.Globals;
 import lexico.Lexer;
 import semantico.Semantic;
 import sintatico.Parser;
-import env.*;
 import env.tokens.*;
 
 public class Main {
