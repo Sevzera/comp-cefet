@@ -43,13 +43,11 @@ public class Parser {
         if (token.tag == tag)
             advance();
         else {
-            error("Syntax error --> Missing token: " + tag + " or invalid token");
+            Globals.error("Syntax error --> Missing token: " + tag + " or invalid token", token);
         }
     }
 
-    private void error(String msg) {
-        throw new Error("Error at line " + Globals.line + ": " + msg + "\nError token: " + token.toString());
-    }
+
 
     private void program() {
         // System.out.println("program");
@@ -63,7 +61,7 @@ public class Parser {
                 eat(Tag.RW_EXIT);
                 break;
             default:
-                error("Syntax error _program_ --> Missing 'start' keyword at the beginning of the program or invalid token or missing 'exit' keyword at the end of the program");
+                Globals.error("Syntax error _program_ --> Missing 'start' keyword at the beginning of the program or invalid token or missing 'exit' keyword at the end of the program", token);
         }
     }
 
@@ -79,7 +77,7 @@ public class Parser {
                 }
                 break;
             default:
-                error("Syntax error _decl-list_ --> Wrong declaration");
+                Globals.error("Syntax error _decl-list_ --> Wrong declaration", token);
         }
     }
 
@@ -94,7 +92,7 @@ public class Parser {
                 eat(Tag.PT_SEMI);
                 break;
             default:
-                error("Syntax error _decl_ --> Missing type declaration or missing semicolon");
+                Globals.error("Syntax error _decl_ --> Missing type declaration or missing semicolon", token);
         }
     }
 
@@ -104,7 +102,7 @@ public class Parser {
             case Tag.ID:
                 identifier();
                 if (semantic.isDeclared(currentValue)) {
-                    error("Semantic error --> Variable " + currentValue + " already declared");
+                    Globals.error("Semantic error --> Variable " + currentValue + " already declared", token);
                 } else {
                     Globals.symbolTable.put(currentValue, new Word(currentValue, Tag.ID));
                     semantic.appendType(currentValue, currentType);
@@ -113,7 +111,7 @@ public class Parser {
                     eat(Tag.PT_COMMA);
                     identifier();
                     if (semantic.isDeclared(currentValue)) {
-                        error("Semantic error --> Variable " + currentValue + " already declared");
+                        Globals.error("Semantic error --> Variable " + currentValue + " already declared", token);
                     } else {
                         Globals.symbolTable.put(currentValue, new Word(currentValue, Tag.ID));
                         semantic.appendType(currentValue, currentType);
@@ -121,7 +119,7 @@ public class Parser {
                 }
                 break;
             default:
-                error("Syntax error _ident-list_ --> Missing identifier or missing comma");
+                Globals.error("Syntax error _ident-list_ --> Missing identifier or missing comma", token);
         }
     }
 
@@ -141,7 +139,7 @@ public class Parser {
                 eat(Tag.TYPE_STRING);
                 break;
             default:
-                error("Syntax error _type_ --> Missing type declaration (int, float or string)");
+                Globals.error("Syntax error _type_ --> Missing type declaration (int, float or string)", token);
         }
     }
 
@@ -160,7 +158,7 @@ public class Parser {
                 }
                 break;
             default:
-                error("Syntax error _stmt-list_ --> Missing statement");
+                Globals.error("Syntax error _stmt-list_ --> Missing statement", token);
         }
     }
 
@@ -186,7 +184,7 @@ public class Parser {
                 eat(Tag.PT_SEMI);
                 break;
             default:
-                error("Syntax error _stmt_ --> Missing statement (if, do, scan, print) or identifier");
+                Globals.error("Syntax error _stmt_ --> Missing statement (if, do, scan, print) or identifier", token);
         }
     }
 
@@ -208,16 +206,16 @@ public class Parser {
                         rightValue = currentValue;
                     }
                     if (leftType != rightType) {
-                        error("Semantic error _assign-stmt_ --> Type mismatch");
+                        Globals.error("Semantic error _assign-stmt_ --> Type mismatch", token);
                     } else {
                         semantic.appendValue(leftValue, rightValue);
                     }
                 } else {
-                    error("Semantic error _assign-stmt_ --> Identifier not declared");
+                    Globals.error("Semantic error _assign-stmt_ --> Identifier not declared", token);
                 }
                 break;
             default:
-                error("Syntax error _assign-stmt_ --> Missing identifier or missing assignment operator or identifier is not declared or wrong command");
+                Globals.error("Syntax error _assign-stmt_ --> Missing identifier or missing assignment operator or identifier is not declared or wrong command", token);
         }
 
     }
@@ -234,7 +232,7 @@ public class Parser {
                 eat(Tag.RW_END);
                 break;
             default:
-                error("Syntax error _if-stmt_ --> Missing 'if' keyword or missing 'then' keyword or missing 'end' keyword");
+                Globals.error("Syntax error _if-stmt_ --> Missing 'if' keyword or missing 'then' keyword or missing 'end' keyword", token);
         }
     }
 
@@ -248,7 +246,7 @@ public class Parser {
             case Tag.RW_END:
                 break;
             default:
-                error("Syntax error _if-stmt-tail_ --> Missing 'else' keyword or missing 'end' keyword");
+                Globals.error("Syntax error _if-stmt-tail_ --> Missing 'else' keyword or missing 'end' keyword", token);
         }
     }
 
@@ -265,7 +263,7 @@ public class Parser {
                 expression();
                 break;
             default:
-                error("Syntax error _condition_ --> Missing identifier or literal or parenthesis or '!' or '-'");
+                Globals.error("Syntax error _condition_ --> Missing identifier or literal or parenthesis or '!' or '-'", token);
         }
     }
 
@@ -278,7 +276,7 @@ public class Parser {
                 stmt_sufix();
                 break;
             default:
-                error("Syntax error _while-stmt_ --> Missing 'do' keyword");
+                Globals.error("Syntax error _while-stmt_ --> Missing 'do' keyword", token);
         }
     }
 
@@ -291,7 +289,7 @@ public class Parser {
                 eat(Tag.RW_END);
                 break;
             default:
-                error("Syntax error _stmt-sufix_ --> Missing 'while' keyword or missing 'end' keyword");
+                Globals.error("Syntax error _stmt-sufix_ --> Missing 'while' keyword or missing 'end' keyword", token);
         }
     }
 
@@ -306,10 +304,10 @@ public class Parser {
                     semantic.appendValue(currentValue, input.nextLine());
                     eat(Tag.PT_CPAR);
                 } else
-                    error("Semantic error _read-stmt_ --> Identifier not declared");
+                    Globals.error("Semantic error _read-stmt_ --> Identifier not declared", token);
                 break;
             default:
-                error("Syntax error _read-stmt_ --> Missing 'scan' keyword or missing parenthesis");
+                Globals.error("Syntax error _read-stmt_ --> Missing 'scan' keyword or missing parenthesis", token);
         }
     }
 
@@ -327,7 +325,7 @@ public class Parser {
                     System.out.println(currentValue);
                 break;
             default:
-                error("Syntax error _write-stmt_ --> Missing 'print' keyword or missing parenthesis");
+                Globals.error("Syntax error _write-stmt_ --> Missing 'print' keyword or missing parenthesis", token);
         }
     }
 
@@ -344,7 +342,7 @@ public class Parser {
                 simple_expression();
                 break;
             default:
-                error("Syntax error _writable_ --> Missing identifier or literal or constant or parenthesis or '!' or '-' or '{'");
+                Globals.error("Syntax error _writable_ --> Missing identifier or literal or constant or parenthesis or '!' or '-' or '{'", token);
         }
     }
 
@@ -362,7 +360,7 @@ public class Parser {
                 expression_tail();
                 break;
             default:
-                error("Syntax error _expression_ --> Missing identifier or literal or constant or parenthesis or '!' or '-'");
+                Globals.error("Syntax error _expression_ --> Missing identifier or literal or constant or parenthesis or '!' or '-'", token);
         }
     }
 
@@ -393,7 +391,7 @@ public class Parser {
                     rightValue = currentValue;
                 }
                 if (leftType != rightType) {
-                    error("Semantic error _expression-tail_ --> Type mismatch");
+                    Globals.error("Semantic error _expression-tail_ --> Type mismatch", token);
                 } else {
                     switch (op) {
                         case "!=":
@@ -424,7 +422,7 @@ public class Parser {
                                 currentValue = String
                                         .valueOf(Float.parseFloat(leftValue) >= Float.parseFloat(rightValue));
                             else if (currentType == Type.STRING)
-                                error("Semantic error _expression-tail_ --> Invalid op for type");
+                                Globals.error("Semantic error _expression-tail_ --> Invalid op for type", token);
                             // currentValue = String.valueOf(leftValue.compareTo(rightValue) >= 0);
                             break;
                         case ">":
@@ -435,7 +433,7 @@ public class Parser {
                                 currentValue = String
                                         .valueOf(Float.parseFloat(leftValue) > Float.parseFloat(rightValue));
                             else if (currentType == Type.STRING)
-                                error("Semantic error _expression-tail_ --> Invalid op for type");
+                                Globals.error("Semantic error _expression-tail_ --> Invalid op for type", token);
                             // currentValue = String.valueOf(leftValue.compareTo(rightValue) > 0);
                             break;
                         case "<=":
@@ -446,7 +444,7 @@ public class Parser {
                                 currentValue = String
                                         .valueOf(Float.parseFloat(leftValue) <= Float.parseFloat(rightValue));
                             else if (currentType == Type.STRING)
-                                error("Semantic error _expression-tail_ --> Invalid op for type");
+                                Globals.error("Semantic error _expression-tail_ --> Invalid op for type", token);
                             // currentValue = String.valueOf(leftValue.compareTo(rightValue) <= 0);
                             break;
                         case "<":
@@ -457,11 +455,11 @@ public class Parser {
                                 currentValue = String
                                         .valueOf(Float.parseFloat(leftValue) < Float.parseFloat(rightValue));
                             else if (currentType == Type.STRING)
-                                error("Semantic error _expression-tail_ --> Invalid op for type");
+                                Globals.error("Semantic error _expression-tail_ --> Invalid op for type", token);
                             // currentValue = String.valueOf(leftValue.compareTo(rightValue) < 0);
                             break;
                         default:
-                            error("Semantic error _simple-expression-tail_ --> Invalid op");
+                            Globals.error("Semantic error _simple-expression-tail_ --> Invalid op", token);
                             break;
                     }
                 }
@@ -471,7 +469,7 @@ public class Parser {
             case Tag.PT_CPAR:
                 break;
             default:
-                error("Syntax error _expression-tail_ --> Missing relational operator or missing 'then' keyword or missing 'end' keyword or missing parenthesis");
+                Globals.error("Syntax error _expression-tail_ --> Missing relational operator or missing 'then' keyword or missing 'end' keyword or missing parenthesis", token);
         }
     }
 
@@ -489,7 +487,7 @@ public class Parser {
                 simple_expression_tail();
                 break;
             default:
-                error("Syntax error _simple-expression_ --> Missing identifier or literal or constant or parenthesis or '!' or '-'");
+                Globals.error("Syntax error _simple-expression_ --> Missing identifier or literal or constant or parenthesis or '!' or '-'", token);
         }
     }
 
@@ -517,7 +515,7 @@ public class Parser {
                     rightValue = currentValue;
                 }
                 if (leftType != rightType) {
-                    error("Semantic error _simple-expression-tail_ --> Type mismatch");
+                    Globals.error("Semantic error _simple-expression-tail_ --> Type mismatch", token);
                 } else {
                     switch (op) {
                         case "+":
@@ -538,14 +536,14 @@ public class Parser {
                                 currentValue = String
                                         .valueOf(Float.parseFloat(leftValue) - Float.parseFloat(rightValue));
                             else if (currentType == Type.STRING)
-                                error("Semantic error _simple-expression-tail_ --> Invalid op for type");
+                                Globals.error("Semantic error _simple-expression-tail_ --> Invalid op for type", token);
                             break;
                         case "||":
                             currentValue = String
                                     .valueOf(Boolean.parseBoolean(leftValue) || Boolean.parseBoolean(rightValue));
                             break;
                         default:
-                            error("Semantic error _simple-expression-tail_ --> Invalid op");
+                            Globals.error("Semantic error _simple-expression-tail_ --> Invalid op", token);
                             break;
                     }
                 }
@@ -573,7 +571,7 @@ public class Parser {
             case Tag.PT_SEMI:
                 break;
             default:
-                error("Syntax error _simple-expression-tail_ --> Missing additive operator or missing relational operator '||' or missing parenthesis");
+                Globals.error("Syntax error _simple-expression-tail_ --> Missing additive operator or missing relational operator '||' or missing parenthesis", token);
         }
     }
 
@@ -591,7 +589,7 @@ public class Parser {
                 term_tail();
                 break;
             default:
-                error("Syntax error _term_ --> Missing identifier or literal or constant or parenthesis or '!' or '-'");
+                Globals.error("Syntax error _term_ --> Missing identifier or literal or constant or parenthesis or '!' or '-'", token);
         }
     }
 
@@ -619,7 +617,7 @@ public class Parser {
                     rightValue = currentValue;
                 }
                 if (leftType != rightType) {
-                    error("Semantic error _term-tail_ --> Type mismatch");
+                    Globals.error("Semantic error _term-tail_ --> Type mismatch", token);
                 } else {
                     switch (op) {
                         case "*":
@@ -630,7 +628,7 @@ public class Parser {
                                 currentValue = String
                                         .valueOf(Float.parseFloat(leftValue) * Float.parseFloat(rightValue));
                             else if (currentType == Type.STRING)
-                                error("Semantic error _simple-expression-tail_ --> Invalid op for type");
+                                Globals.error("Semantic error _simple-expression-tail_ --> Invalid op for type", token);
                             break;
                         case "/":
                             if (currentType == Type.INT) {
@@ -641,14 +639,14 @@ public class Parser {
                                 currentValue = String
                                         .valueOf(Float.parseFloat(leftValue) / Float.parseFloat(rightValue));
                             else if (currentType == Type.STRING)
-                                error("Semantic error _simple-expression-tail_ --> Invalid op for type");
+                                Globals.error("Semantic error _simple-expression-tail_ --> Invalid op for type", token);
                             break;
                         case "&&":
                             currentValue = String
                                     .valueOf(Boolean.parseBoolean(leftValue) && Boolean.parseBoolean(rightValue));
                             break;
                         default:
-                            error("Semantic error _simple-expression-tail_ --> Invalid op");
+                            Globals.error("Semantic error _simple-expression-tail_ --> Invalid op", token);
                             break;
                     }
                 }
@@ -673,7 +671,7 @@ public class Parser {
             case Tag.PT_SEMI:
                 break;
             default:
-                error("Syntax error _term-tail_ --> Missing multiplicative operator or missing additive operator or missing relational operator '||'");
+                Globals.error("Syntax error _term-tail_ --> Missing multiplicative operator or missing additive operator or missing relational operator '||'", token);
         }
     }
 
@@ -700,10 +698,10 @@ public class Parser {
                 else if (currentType == Type.FLOAT)
                     currentValue = String.valueOf(-Float.parseFloat(currentValue));
                 else if (currentType == Type.STRING)
-                    error("Semantic error _factor-a_ --> Invalid op for type");
+                    Globals.error("Semantic error _factor-a_ --> Invalid op for type", token);
                 break;
             default:
-                error("Syntax error _factor-a_ --> Missing identifier or literal or constant or parenthesis or '!' or '-'");
+                Globals.error("Syntax error _factor-a_ --> Missing identifier or literal or constant or parenthesis or '!' or '-'", token);
         }
     }
 
@@ -716,7 +714,7 @@ public class Parser {
                     currentType = semantic.getIDType(currentValue);
                     break;
                 } else
-                    error("Semantic error _factor_ --> Identifier '" + currentValue + "' is not declared");
+                    Globals.error("Semantic error _factor_ --> Identifier '" + currentValue + "' is not declared", token);
             case Tag.LIT_INT:
             case Tag.LIT_FLOAT:
             case Tag.PT_OBRA:
@@ -728,7 +726,7 @@ public class Parser {
                 eat(Tag.PT_CPAR);
                 break;
             default:
-                error("Syntax error _factor_ --> Missing identifier or constant or parenthesis");
+                Globals.error("Syntax error _factor_ --> Missing identifier or constant or parenthesis", token);
         }
     }
 
@@ -760,7 +758,7 @@ public class Parser {
                 eat(Tag.CP_LT);
                 break;
             default:
-                error("Syntax error _relop_ --> Missing relational operator");
+                Globals.error("Syntax error _relop_ --> Missing relational operator", token);
         }
     }
 
@@ -780,7 +778,7 @@ public class Parser {
                 eat(Tag.RL_OR);
                 break;
             default:
-                error("Syntax error _addop_ --> Missing additive operator or missing relational operator '||'");
+                Globals.error("Syntax error _addop_ --> Missing additive operator or missing relational operator '||'", token);
         }
     }
 
@@ -800,7 +798,7 @@ public class Parser {
                 eat(Tag.RL_AND);
                 break;
             default:
-                error("Syntax error _mulop_ --> Missing multiplicative operator or missing relational operator '&&'");
+                Globals.error("Syntax error _mulop_ --> Missing multiplicative operator or missing relational operator '&&'", token);
         }
     }
 
@@ -817,7 +815,7 @@ public class Parser {
                 literal();
                 break;
             default:
-                error("Syntax error _constant_ --> Missing integer or float constant");
+                Globals.error("Syntax error _constant_ --> Missing integer or float constant", token);
         }
     }
 
@@ -830,11 +828,11 @@ public class Parser {
                     currentType = Type.INT;
                     eat(Tag.LIT_INT);
                 } else {
-                    error("Semantic error _float-const_ --> Missing float constant");
+                    Globals.error("Semantic error _float-const_ --> Missing float constant", token);
                 }
                 break;
             default:
-                error("Syntax error _integer-const_ --> Missing integer constant");
+                Globals.error("Syntax error _integer-const_ --> Missing integer constant", token);
         }
     }
 
@@ -847,11 +845,11 @@ public class Parser {
                     currentType = Type.FLOAT;
                     eat(Tag.LIT_FLOAT);
                 } else {
-                    error("Semantic error _float-const_ --> Missing float constant");
+                    Globals.error("Semantic error _float-const_ --> Missing float constant", token);
                 }
                 break;
             default:
-                error("Syntax error _float-const_ --> Missing float constant");
+                Globals.error("Syntax error _float-const_ --> Missing float constant", token);
         }
     }
 
@@ -865,12 +863,12 @@ public class Parser {
                     currentType = Type.STRING;
                     eat(Tag.LIT_STRING);
                 } else {
-                    error("Semantic error _literal_ --> Missing string constant");
+                    Globals.error("Semantic error _literal_ --> Missing string constant", token);
                 }
                 eat(Tag.PT_CBRA);
                 break;
             default:
-                error("Syntax error _literal_ --> Missing '{' or missing string literal or missing '}'");
+                Globals.error("Syntax error _literal_ --> Missing '{' or missing string literal or missing '}'", token);
         }
     }
 
@@ -882,7 +880,7 @@ public class Parser {
                 eat(Tag.ID);
                 break;
             default:
-                error("Syntax error _identifier_ --> Missing identifier");
+                Globals.error("Syntax error _identifier_ --> Missing identifier", token);
         }
     }
 

@@ -119,7 +119,7 @@ public class Lexer {
             }
             if (ch == 65535) {
                 Token t = new Token(Tag.EOF);
-                Globals.errorTable.put(t, line_aux);
+                Globals.error("Lexical error --> Comment not closed", t);
                 return t;
             }
             if (ch == ' ' || ch == '\t' || ch == '\r' || ch == '\b' || ch == '\n') {
@@ -172,7 +172,8 @@ public class Lexer {
                     return Word.and; // &&
                 else {
                     Token t = new Token('&');
-                    Globals.errorTable.put(t, Globals.line);
+                    Globals.error("Lexical error --> Unknown token pattern", t);
+
                     return t;
                 }
             case '|':
@@ -180,7 +181,8 @@ public class Lexer {
                     return Word.or;
                 else {
                     Token t = new Token('|');
-                    Globals.errorTable.put(t, Globals.line);
+                    Globals.error("Lexical error --> Unknown token pattern", t);
+
                     return t;
                 }
             case '!':
@@ -254,10 +256,10 @@ public class Lexer {
             return w; // identificador
         }
 
-        // gera tokens genericos para padroes desconhecidos e adiciona a tabela de erros
+        // gera tokens genericos para padroes desconhecidos
         Token t = new Token(ch);
         if (t.tag != 65535)
-            Globals.errorTable.put(t, Globals.line);
+            Globals.error("Lexical error --> Unknown token pattern", t);
         ch = ' ';
         return t;
     }

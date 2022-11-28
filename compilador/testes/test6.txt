@@ -10,9 +10,7 @@ Comentario de linha multipla aberto
 
 start
 
-    int a;
-    float b;
-    string c;
+    int a,b,c;
 
     print({1!});
     print({2});
