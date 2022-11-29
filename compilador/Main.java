@@ -14,7 +14,7 @@ public class Main {
             Semantic semantic = new Semantic();
             Parser parser = new Parser(lexer, semantic);
             parser.start();
-            System.out.println("\nAnálises léxica, sintática e semântica realizadas com sucesso!");
+            System.out.println("Análises léxica, sintática e semântica realizadas com sucesso!");
         } catch (IOException e) {
             e.printStackTrace();
         }
