@@ -14,7 +14,7 @@ public class Main {
             Semantic semantic = new Semantic();
             Parser parser = new Parser(lexer, semantic);
             parser.start();
-            System.out.println("\n\nCompilado com sucesso!");
+            System.out.println("\nCompilado com sucesso!");
             System.out.println("\nTipos -> 1: int, 2: float, 3: string\n");
             System.out.println("Identificadores na tabela de símbolos:");
             for (Map.Entry<String, Word> entry : Globals.symbolTable.entrySet()) {
