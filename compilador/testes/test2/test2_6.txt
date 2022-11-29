@@ -12,5 +12,5 @@ start
     e = val + 2.2;
     print ({E: });
     print (e);
-    a = (b + c + d)/2.0;
+    a = (b + c + d)/2;
 exit
