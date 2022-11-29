@@ -319,10 +319,6 @@ public class Parser {
                 eat(Tag.PT_OPAR);
                 writable();
                 eat(Tag.PT_CPAR);
-                if (semantic.isDeclared(currentValue))
-                    System.out.println(semantic.getIDValue(currentValue));
-                else
-                    System.out.println(currentValue);
                 break;
             default:
                 Globals.error("Syntax error _write-stmt_ --> Missing 'print' keyword or missing parenthesis", token);
